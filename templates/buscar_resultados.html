@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados: {{ query }} - KinderFiesta</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-color: #FF6B6B;
+            --primary-dark: #EE5A52;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFD93D;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+        }
+        body { font-family: 'Poppins', sans-serif; background: var(--light-color); padding-top: 100px; }
+        
+        /* NAVBAR */
+        .navbar { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: fixed; width: 100%; top: 0; z-index: 1000; }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.8em; font-weight: 900; color: var(--primary-color); text-decoration: none; }
+        .nav-links { display: flex; list-style: none; gap: 40px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--dark-color); font-weight: 600; transition: all 0.3s ease; }
+        .nav-links a:hover { color: var(--primary-color); }
+        
+        /* CONTAINER */
+        .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* HEADER BÚSQUEDA */
+        .search-header { background: white; border-radius: 15px; padding: 30px 40px; margin-bottom: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+        .search-header h1 { font-size: 2.2em; font-weight: 900; color: var(--dark-color); margin-bottom: 10px; }
+        .search-header .query { color: var(--primary-color); }
+        .search-header p { color: #666; font-size: 1.1em; }
+        .btn-volver { display: inline-block; margin-top: 20px; padding: 12px 30px; background: var(--secondary-color); color: white; text-decoration: none; border-radius: 25px; font-weight: 700; transition: all 0.3s ease; }
+        .btn-volver:hover { background: #3DBCB4; transform: translateY(-2px); }
+        
+        /* RESULTADOS */
+        .resultados-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+        .salon-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer; }
+        .salon-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+        .salon-image { width: 100%; height: 250px; object-fit: cover; }
+        .salon-content { padding: 25px; }
+        .salon-nombre { font-size: 1.5em; font-weight: 800; color: var(--dark-color); margin-bottom: 10px; }
+        .salon-direccion { color: #666; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .salon-categoria { display: inline-block; background: var(--accent-color); color: var(--dark-color); padding: 6px 15px; border-radius: 20px; font-size: 0.85em; font-weight: 700; }
+        
+        /* SIN RESULTADOS */
+        .sin-resultados { text-align: center; padding: 80px 20px; }
+        .sin-resultados-icon { font-size: 6em; color: #DDD; margin-bottom: 30px; }
+        .sin-resultados h2 { font-size: 2.5em; font-weight: 900; color: var(--dark-color); margin-bottom: 15px; }
+        .sin-resultados p { font-size: 1.2em; color: #666; margin-bottom: 30px; line-height: 1.8; }
+        .btn-explorar { display: inline-block; padding: 18px 40px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 30px; font-weight: 700; font-size: 1.1em; transition: all 0.3s ease; }
+        .btn-explorar:hover { background: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4); }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">
+            <i class="fas fa-birthday-cake"></i>
+            <span>KinderFiesta</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/salones">Salones</a></li>
+            <li><a href="/nosotros">Nosotros</a></li>
+            <li><a href="/contacto">Contacto</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- HEADER -->
+    <div class="search-header">
+        <h1>Resultados para: <span class="query">"{{ query }}"</span></h1>
+        <p>
+            {% if salones %}
+                Se encontraron <strong>{{ salones|length }}</strong> salones
+            {% else %}
+                No se encontraron salones
+            {% endif %}
+        </p>
+        <a href="/" class="btn-volver">
+            <i class="fas fa-arrow-left"></i> Volver al Inicio
+        </a>
+    </div>
+    
+    {% if salones %}
+        <!-- RESULTADOS ENCONTRADOS -->
+        <div class="resultados-grid">
+            {% for salon in salones %}
+            <div class="salon-card" onclick="window.location.href='/salon/{{ salon.id }}'">
+                <img src="{{ url_for('static', filename='imagenes/' + salon.foto_principal) }}" 
+                     alt="{{ salon.nombre }}" 
+                     class="salon-image"
+                     onerror="this.src='https://via.placeholder.com/400x250/FF6B6B/FFFFFF?text=Sin+Imagen'">
+                <div class="salon-content">
+                    <h3 class="salon-nombre">{{ salon.nombre }}</h3>
+                    <div class="salon-direccion">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ salon.direccion }}
+                    </div>
+                    <span class="salon-categoria">{{ salon.categoria }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- SIN RESULTADOS -->
+        <div class="sin-resultados">
+            <div class="sin-resultados-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h2>😔 No encontramos salones</h2>
+            <p>
+                No pudimos encontrar ningún salón con el término <strong>"{{ query }}"</strong><br>
+                Intenta con otro nombre o explora todos nuestros salones verificados.
+            </p>
+            <a href="/salones" class="btn-explorar">
+                <i class="fas fa-store"></i> Explorar Todos los Salones
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

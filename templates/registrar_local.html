@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Local - KinderFiesta</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-color: #FF6B6B;
+            --primary-dark: #EE5A52;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFD93D;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+            --text-color: #333;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        body { font-family: 'Poppins', sans-serif; color: var(--text-color); line-height: 1.6; overflow-x: hidden; background: var(--light-color); }
+        
+        /* NAVBAR */
+        .navbar { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: fixed; width: 100%; top: 0; z-index: 1000; transition: var(--transition); }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.8em; font-weight: 900; color: var(--primary-color); text-decoration: none; }
+        .logo i { font-size: 1.3em; }
+        .nav-links { display: flex; list-style: none; gap: 40px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--dark-color); font-weight: 600; font-size: 1em; transition: var(--transition); }
+        .nav-links a:hover { color: var(--primary-color); }
+        .btn-registrar { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white !important; padding: 12px 30px; border-radius: 25px; font-weight: 700; border: none; cursor: pointer; transition: var(--transition); text-decoration: none; }
+        .btn-registrar:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4); }
+        
+        /* HERO */
+        .hero-registro { background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); padding: 140px 20px 80px; text-align: center; color: white; }
+        .hero-registro h1 { font-size: 3.5em; font-weight: 900; margin-bottom: 20px; }
+        .hero-registro p { font-size: 1.3em; opacity: 0.95; }
+        
+        /* CONTAINER */
+        .container { max-width: 900px; margin: 0 auto; padding: 60px 20px; }
+        
+        /* FORMULARIO */
+        .form-section { background: white; padding: 50px; border-radius: var(--border-radius); box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+        .form-section h2 { font-size: 2em; font-weight: 800; color: var(--dark-color); margin-bottom: 30px; text-align: center; }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; font-weight: 700; color: var(--dark-color); margin-bottom: 10px; font-size: 1.1em; }
+        .form-group label .required { color: var(--primary-color); }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 15px; border: 2px solid #E8E8E8; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 1em; transition: var(--transition); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1); }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .form-help { font-size: 0.9em; color: #666; margin-top: 5px; }
+        
+        /* FOTOS */
+        .upload-area { border: 3px dashed #E8E8E8; border-radius: 15px; padding: 40px; text-align: center; cursor: pointer; transition: var(--transition); background: var(--light-color); }
+        .upload-area:hover { border-color: var(--primary-color); background: #FFF5F5; }
+        .upload-area i { font-size: 3em; color: var(--primary-color); margin-bottom: 15px; }
+        .upload-area p { font-size: 1.1em; color: var(--dark-color); font-weight: 600; }
+        .upload-area span { font-size: 0.9em; color: #666; display: block; margin-top: 10px; }
+        #fotosInput { display: none; }
+        .preview-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+        .preview-item { position: relative; width: 100%; height: 150px; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+        .preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        .preview-item .remove-btn { position: absolute; top: 5px; right: 5px; background: var(--primary-color); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.9em; display: flex; align-items: center; justify-content: center; }
+        
+        /* BOTÓN ENVIAR */
+        .btn-enviar { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 1.2em; cursor: pointer; transition: var(--transition); margin-top: 30px; }
+        .btn-enviar:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4); }
+        .btn-enviar:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero-registro h1 { font-size: 2.5em; }
+            .form-section { padding: 30px 20px; }
+            .preview-container { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">
+            <i class="fas fa-birthday-cake"></i>
+            <span>KinderFiesta</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/salones">Salones</a></li>
+            <li><a href="/nosotros">Nosotros</a></li>
+            <li><a href="/contacto">Contacto</a></li>
+            
+            {% if session.get('user_logged_in') %}
+                <li style="color: var(--dark-color); font-weight: 600;">
+                    <i class="fas fa-user-circle" style="color: var(--secondary-color);"></i>
+                    {{ session.get('user_nombre') }}
+                </li>
+                <li><a href="/logout" style="color: #999;">Cerrar Sesión</a></li>
+            {% else %}
+                <li><a href="/login" class="btn-login-nav">Iniciar Sesión</a></li>
+            {% endif %}
+            
+            <li><a href="/registrar-local" class="btn-registrar">Registrar Local</a></li>
+        </ul>
+    </div>
+</nav>
+
+<section class="hero-registro">
+    <h1>📝 Registra tu Local</h1>
+    <p>Únete a nuestra plataforma y dale visibilidad a tu negocio</p>
+</section>
+
+<div class="container">
+    <div class="form-section">
+        <h2>Información del Local</h2>
+        
+        <form id="registroForm" enctype="multipart/form-data">
+            <!-- INFORMACIÓN BÁSICA -->
+            <div class="form-group">
+                <label>Nombre del Local <span class="required">*</span></label>
+                <input type="text" id="nombre" name="nombre" placeholder="Ej: Salón Infantil Mis Sueños" required>
+            </div>
+<!-- HORARIOS DE ATENCIÓN -->
+<div class="form-group">
+    <label style="font-size: 1.2em; font-weight: 600; margin-bottom: 10px; display: block;">
+        Horarios de Atención <span style="color: red;">*</span>
+    </label>
+    <p style="font-size: 0.9em; color: #666; margin-bottom: 20px;">
+        Indica los horarios en que tu local atiende al público
+    </p>
+    
+    <!-- LUNES -->
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+        <input type="checkbox" id="lunes_check" name="lunes_check" style="width: 20px; height: 20px; cursor: pointer;">
+        <label for="lunes_check" style="min-width: 100px; font-weight: 600; margin: 0;">Lunes</label>
+        <select name="lunes_apertura" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Apertura</option>
+            <option value="06:00">06:00</option>
+            <option value="07:00">07:00</option>
+            <option value="08:00">08:00</option>
+            <option value="09:00" selected>09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+        </select>
+        <span style="font-weight: 600;">a</span>
+        <select name="lunes_cierre" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Cierre</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00" selected>21:00</option>
+            <option value="22:00">22:00</option>
+        </select>
+    </div>
+
+    <!-- MARTES -->
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+        <input type="checkbox" id="martes_check" name="martes_check" style="width: 20px; height: 20px; cursor: pointer;">
+        <label for="martes_check" style="min-width: 100px; font-weight: 600; margin: 0;">Martes</label>
+        <select name="martes_apertura" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Apertura</option>
+            <option value="06:00">06:00</option>
+            <option value="07:00">07:00</option>
+            <option value="08:00">08:00</option>
+            <option value="09:00" selected>09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+        </select>
+        <span style="font-weight: 600;">a</span>
+        <select name="martes_cierre" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Cierre</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00" selected>21:00</option>
+            <option value="22:00">22:00</option>
+        </select>
+    </div>
+
+    <!-- MIÉRCOLES -->
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+        <input type="checkbox" id="miercoles_check" name="miercoles_check" style="width: 20px; height: 20px; cursor: pointer;">
+        <label for="miercoles_check" style="min-width: 100px; font-weight: 600; margin: 0;">Miércoles</label>
+        <select name="miercoles_apertura" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Apertura</option>
+            <option value="06:00">06:00</option>
+            <option value="07:00">07:00</option>
+            <option value="08:00">08:00</option>
+            <option value="09:00" selected>09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+        </select>
+        <span style="font-weight: 600;">a</span>
+        <select name="miercoles_cierre" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Cierre</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00" selected>21:00</option>
+            <option value="22:00">22:00</option>
+        </select>
+    </div>
+
+    <!-- JUEVES -->
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+        <input type="checkbox" id="jueves_check" name="jueves_check" style="width: 20px; height: 20px; cursor: pointer;">
+        <label for="jueves_check" style="min-width: 100px; font-weight: 600; margin: 0;">Jueves</label>
+        <select name="jueves_apertura" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Apertura</option>
+            <option value="06:00">06:00</option>
+            <option value="07:00">07:00</option>
+            <option value="08:00">08:00</option>
+            <option value="09:00" selected>09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+        </select>
+        <span style="font-weight: 600;">a</span>
+        <select name="jueves_cierre" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Cierre</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00" selected>21:00</option>
+            <option value="22:00">22:00</option>
+        </select>
+    </div>
+
+    <!-- VIERNES -->
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+        <input type="checkbox" id="viernes_check" name="viernes_check" style="width: 20px; height: 20px; cursor: pointer;">
+        <label for="viernes_check" style="min-width: 100px; font-weight: 600; margin: 0;">Viernes</label>
+        <select name="viernes_apertura" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Apertura</option>
+            <option value="06:00">06:00</option>
+            <option value="07:00">07:00</option>
+            <option value="08:00">08:00</option>
+            <option value="09:00" selected>09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+        </select>
+        <span style="font-weight: 600;">a</span>
+        <select name="viernes_cierre" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Cierre</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00" selected>21:00</option>
+            <option value="22:00">22:00</option>
+        </select>
+    </div>
+
+    <!-- SÁBADO -->
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+        <input type="checkbox" id="sabado_check" name="sabado_check" style="width: 20px; height: 20px; cursor: pointer;">
+        <label for="sabado_check" style="min-width: 100px; font-weight: 600; margin: 0;">Sábado</label>
+        <select name="sabado_apertura" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Apertura</option>
+            <option value="06:00">06:00</option>
+            <option value="07:00">07:00</option>
+            <option value="08:00">08:00</option>
+            <option value="09:00" selected>09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+        </select>
+        <span style="font-weight: 600;">a</span>
+        <select name="sabado_cierre" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <option value="">Cierre</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00" selected>18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00">21:00</option>
+            <option value="22:00">22:00</option>
+        </select>
+    </div>
+
+<!-- DOMINGO -->
+<div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+    <input type="checkbox" id="domingo_check" name="domingo_check" style="width: 20px; height: 20px; cursor: pointer;">
+    <label for="domingo_check" style="min-width: 100px; font-weight: 600; margin: 0;">Domingo</label>
+    <select name="domingo_apertura" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+        <option value="">Apertura</option>
+        <option value="06:00">06:00</option>
+        <option value="07:00">07:00</option>
+        <option value="08:00">08:00</option>
+        <option value="09:00">09:00</option>
+        <option value="10:00" selected>10:00</option>
+        <option value="11:00">11:00</option>
+        <option value="12:00">12:00</option>
+    </select>
+    <span style="font-weight: 600;">a</span>
+    <select name="domingo_cierre" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+        <option value="">Cierre</option>
+        <option value="14:00">14:00</option>
+        <option value="15:00">15:00</option>
+        <option value="16:00">16:00</option>
+        <option value="17:00">17:00</option>
+        <option value="18:00" selected>18:00</option>
+        <option value="19:00">19:00</option>
+        <option value="20:00">20:00</option>
+        <option value="21:00">21:00</option>
+        <option value="22:00">22:00</option>
+    </select>
+</div>
+
+
+
+            
+            <div class="form-group">
+                <label>Categoría <span class="required">*</span></label>
+                <select id="categoria" name="categoria" required>
+                    <option value="">Selecciona una categoría</option>
+                    <option value="Salón Infantil">Salón Infantil</option>
+                    <option value="Centro de Eventos">Centro de Eventos</option>
+                    <option value="Parque de Diversiones">Parque de Diversiones</option>
+                    <option value="Salón de Fiestas">Salón de Fiestas</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea id="descripcion" name="descripcion" placeholder="Cuéntanos sobre tu local (máximo 500 caracteres)" maxlength="500"></textarea>
+                <p class="form-help"><span id="descCount">0</span>/500 caracteres</p>
+            </div>
+            
+            <!-- UBICACIÓN -->
+            <div class="form-group">
+                <label>Dirección Completa <span class="required">*</span></label>
+                <input type="text" id="direccion" name="direccion" placeholder="Ej: Av. 16 de Julio #500, Zona Ciudad Satélite" required>
+            </div>
+            
+<div class="form-group">
+    <label>Zona <span class="required">*</span></label>
+    <select id="zona" name="zona" required onchange="toggleOtraZona()">
+        <option value="">Selecciona una zona</option>
+        <option value="Ciudad Satélite">Ciudad Satélite</option>
+        <option value="Villa Adela">Villa Adela</option>
+        <option value="16 de Julio">16 de Julio</option>
+        <option value="Senkata">Senkata</option>
+        <option value="Villa Bolívar">Villa Bolívar</option>
+        <option value="Santiago II">Santiago II</option>
+        <option value="Ballivián">Ballivián</option>
+        <option value="Rio Seco">Rio Seco</option>
+        <option value="Otra">Otra</option>
+    </select>
+</div>
+
+<!-- Campo oculto para "Otra zona" -->
+<div class="form-group" id="otraZonaContainer" style="display: none;">
+    <label>Especifica la Zona <span class="required">*</span></label>
+    <input type="text" id="otraZona" name="otraZona" placeholder="Ej: Villa Esperanza">
+    <p class="form-help">Escribe el nombre de tu zona</p>
+</div>
+
+            <!-- CONTACTO -->
+<div class="form-group">
+    <label>Teléfono</label>
+    <input type="tel" id="telefono" name="telefono" placeholder="Ej: 70123456">
+    <p class="form-help">Opcional - Si no lo proporcionas, aparecerá "No disponible"</p>
+</div>
+
+<div class="form-group">
+    <label>WhatsApp</label>
+    <input type="tel" id="whatsapp" name="whatsapp" placeholder="Ej: 70123456">
+    <p class="form-help">Opcional - Para contacto directo vía WhatsApp</p>
+</div>
+
+            
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" name="email" placeholder="Ej: contacto@milocal.com">
+            </div>
+            <div class="form-group">
+    <label>Link de Google Maps <span class="required">*</span></label>
+    <input type="url" id="google_maps" name="google_maps" placeholder="https://maps.google.com/?q=..." required>
+    <p class="form-help">
+        <strong>¿Cómo obtenerlo?</strong><br>
+        1. Abre Google Maps y busca tu dirección<br>
+        2. Click en "Compartir" → Copiar enlace<br>
+        3. Pega el enlace aquí
+    </p>
+</div>
+            
+            <!-- FOTOS -->
+            <div class="form-group">
+                <label>Fotos del Local <span class="required">*</span> (Mínimo 3, Máximo 5)</label>
+                <div class="upload-area" onclick="document.getElementById('fotosInput').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Haz clic para subir fotos</p>
+                    <span>JPG, PNG o GIF - Máximo 5 fotos</span>
+                </div>
+                <input type="file" id="fotosInput" name="fotos" multiple accept="image/*" onchange="previsualizarFotos(event)">
+                <div id="previewContainer" class="preview-container"></div>
+                <p class="form-help" id="fotosCount">0 fotos seleccionadas (mínimo 3, máximo 5)</p>
+            </div>
+            
+            <button type="submit" class="btn-enviar" id="btnEnviar">
+                <i class="fas fa-paper-plane"></i> Enviar Solicitud
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let fotosSeleccionadas = [];
+    // Mostrar/ocultar campo "Otra zona"
+function toggleOtraZona() {
+    const zonaSelect = document.getElementById('zona');
+    const otraZonaContainer = document.getElementById('otraZonaContainer');
+    const otraZonaInput = document.getElementById('otraZona');
+    
+    if (zonaSelect.value === 'Otra') {
+        otraZonaContainer.style.display = 'block';
+        otraZonaInput.setAttribute('required', 'required');
+    } else {
+        otraZonaContainer.style.display = 'none';
+        otraZonaInput.removeAttribute('required');
+        otraZonaInput.value = '';
+    }
+}
+
+    // Toggle horario (mostrar/ocultar según checkbox)
+function toggleHorario(dia) {
+    const checkbox = document.getElementById(`${dia}_cerrado`);
+    const horarioDiv = document.getElementById(`${dia}_horario`);
+    const aperturaSelect = document.getElementById(`${dia}_apertura`);
+    const cierreSelect = document.getElementById(`${dia}_cierre`);
+    
+    if (checkbox.checked) {
+        horarioDiv.style.display = 'none';
+        aperturaSelect.removeAttribute('required');
+        cierreSelect.removeAttribute('required');
+    } else {
+        horarioDiv.style.display = 'flex';
+        aperturaSelect.setAttribute('required', 'required');
+        cierreSelect.setAttribute('required', 'required');
+    }
+}
+
+// Obtener horarios del formulario
+function obtenerHorarios() {
+    const horarios = [];
+    const dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+    
+    dias.forEach(dia => {
+        const checkbox = document.getElementById(`${dia}_check`);
+        
+        if (checkbox && checkbox.checked) {
+            const apertura = document.getElementsByName(`${dia}_apertura`)[0]?.value;
+            const cierre = document.getElementsByName(`${dia}_cierre`)[0]?.value;
+            
+            if (apertura && cierre) {
+                horarios.push({
+                    dia: dia.charAt(0).toUpperCase() + dia.slice(1),
+                    apertura: apertura,
+                    cierre: cierre,
+                    cerrado: false
+                });
+            }
+        } else {
+            // Día cerrado
+            horarios.push({
+                dia: dia.charAt(0).toUpperCase() + dia.slice(1),
+                apertura: null,
+                cierre: null,
+                cerrado: true
+            });
+        }
+    });
+    
+    return horarios;
+}
+
+
+    // Contador de descripción
+    document.getElementById('descripcion').addEventListener('input', function() {
+        document.getElementById('descCount').textContent = this.value.length;
+    });
+    
+    // Previsualizar fotos
+    function previsualizarFotos(event) {
+        const files = Array.from(event.target.files);
+        const previewContainer = document.getElementById('previewContainer');
+        const fotosCount = document.getElementById('fotosCount');
+        
+        // Limitar a 5 fotos
+        if (files.length > 5) {
+            alert('⚠️ Solo puedes subir máximo 5 fotos');
+            event.target.value = '';
+            return;
+        }
+        
+        fotosSeleccionadas = files;
+        previewContainer.innerHTML = '';
+        
+        files.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview ${index + 1}">
+                    <button type="button" class="remove-btn" onclick="eliminarFoto(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                previewContainer.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        fotosCount.textContent = `${files.length} fotos seleccionadas (mínimo 3, máximo 5)`;
+        fotosCount.style.color = files.length >= 3 ? '#4ECDC4' : '#FF6B6B';
+    }
+    
+    // Eliminar foto
+    function eliminarFoto(index) {
+        const input = document.getElementById('fotosInput');
+        const dt = new DataTransfer();
+        
+        fotosSeleccionadas = fotosSeleccionadas.filter((file, i) => i !== index);
+        
+        fotosSeleccionadas.forEach(file => dt.items.add(file));
+        input.files = dt.files;
+        
+        // Actualizar preview
+        previsualizarFotos({ target: input });
+    }
+    
+    // Enviar formulario
+    document.getElementById('registroForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validar fotos
+        if (fotosSeleccionadas.length < 3) {
+            alert('⚠️ Debes subir al menos 3 fotos de tu local');
+            return;
+        }
+        // Validar Google Maps
+const googleMaps = document.getElementById('google_maps').value;
+if (!googleMaps.includes('google.com/maps') && !googleMaps.includes('maps.app.goo.gl')) {
+    alert('⚠️ El enlace de Google Maps no es válido. Debe contener "google.com/maps"');
+    return;
+}
+
+        
+        if (fotosSeleccionadas.length > 5) {
+            alert('⚠️ Máximo 5 fotos permitidas');
+            return;
+        }
+        
+        const btnEnviar = document.getElementById('btnEnviar');
+        btnEnviar.disabled = true;
+        btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        
+        try {
+            const formData = new FormData();
+            
+            // Agregar campos de texto
+            formData.append('nombre', document.getElementById('nombre').value);
+            formData.append('categoria', document.getElementById('categoria').value);
+            formData.append('descripcion', document.getElementById('descripcion').value);
+            formData.append('direccion', document.getElementById('direccion').value);
+            // Zona: Si seleccionó "Otra", usar el valor del input personalizado
+const zonaSelect = document.getElementById('zona').value;
+const zonaFinal = zonaSelect === 'Otra' ? document.getElementById('otraZona').value : zonaSelect;
+formData.append('zona', zonaFinal);
+formData.append('telefono', document.getElementById('telefono').value || 'No disponible');
+formData.append('whatsapp', document.getElementById('whatsapp').value || '');
+formData.append('email', document.getElementById('email').value || '');
+formData.append('google_maps', document.getElementById('google_maps').value);
+            formData.append('horarios', JSON.stringify(obtenerHorarios()));
+            formData.append('servicios', JSON.stringify([]));
+            
+            // Agregar fotos
+            fotosSeleccionadas.forEach((file) => {
+                formData.append('fotos', file);
+            });
+            
+            const response = await fetch('/api/registrar-local', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('✅ ¡Solicitud enviada exitosamente!\n\nUn administrador la revisará pronto.');
+                document.getElementById('registroForm').reset();
+                document.getElementById('previewContainer').innerHTML = '';
+                fotosSeleccionadas = [];
+                document.getElementById('fotosCount').textContent = '0 fotos seleccionadas (mínimo 3, máximo 5)';
+                document.getElementById('descCount').textContent = '0';
+            } else {
+                alert('❌ Error: ' + data.message);
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('❌ Error al enviar la solicitud. Intenta nuevamente.');
+        } finally {
+            btnEnviar.disabled = false;
+            btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Solicitud';
+        }
+    });
+</script>
+
+</body>
+</html>

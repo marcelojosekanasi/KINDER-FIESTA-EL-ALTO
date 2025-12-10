@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - KinderFiesta</title>
+    <meta name="description" content="Contáctanos para encontrar el salón perfecto o registrar tu local en KinderFiesta.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-color: #FF6B6B;
+            --primary-dark: #EE5A52;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFD93D;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+            --text-color: #333;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        body { font-family: 'Poppins', sans-serif; color: var(--text-color); line-height: 1.6; overflow-x: hidden; }
+        
+        /* NAVBAR */
+        .navbar { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: fixed; width: 100%; top: 0; z-index: 1000; }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.8em; font-weight: 900; color: var(--primary-color); text-decoration: none; }
+        .nav-links { display: flex; list-style: none; gap: 40px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--dark-color); font-weight: 600; transition: var(--transition); }
+        .nav-links a:hover { color: var(--primary-color); }
+        .btn-registrar { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; padding: 12px 30px; border-radius: 25px; font-weight: 700; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
+        
+        /* HEADER */
+        .page-header { background: linear-gradient(135deg, rgba(255, 107, 107, 0.95) 0%, rgba(78, 205, 196, 0.95) 100%), url('https://images.unsplash.com/photo-1516534775068-ba3e7458af70?w=1920') center/cover; padding: 150px 20px 100px; text-align: center; color: white; margin-top: 80px; }
+        .page-header h1 { font-size: 3.5em; font-weight: 900; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .page-header p { font-size: 1.3em; font-weight: 300; max-width: 800px; margin: 0 auto; }
+        
+        /* CONTENT */
+        .content-section { padding: 100px 20px; background: white; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 3em; font-weight: 900; color: var(--dark-color); margin-bottom: 15px; }
+        .highlight { color: var(--primary-color); }
+        .section-header p { font-size: 1.2em; color: #666; max-width: 700px; margin: 0 auto; }
+        
+        .contacto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 60px; }
+        .contacto-card { background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; transition: var(--transition); }
+        .contacto-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+        .contacto-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .contacto-icon i { font-size: 2em; color: white; }
+        .contacto-icon.telefono { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E72 100%); }
+        .contacto-icon.email { background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); }
+        .contacto-icon.whatsapp { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); }
+        .contacto-icon.ubicacion { background: linear-gradient(135deg, #FFD93D 0%, #F4B925 100%); }
+        .contacto-card h3 { font-size: 1.3em; font-weight: 800; margin-bottom: 15px; color: var(--dark-color); }
+        .contacto-card p { color: #666; margin-bottom: 15px; line-height: 1.8; }
+        .contacto-link { font-weight: 700; font-size: 1.1em; text-decoration: none; transition: var(--transition); }
+        .contacto-link:hover { opacity: 0.8; }
+        .contacto-horario { color: #999; font-size: 0.9em; margin-top: 10px; }
+        
+        /* FOOTER */
+        footer { background: linear-gradient(135deg, #2D3436 0%, #1e272e 100%); color: white; padding: 60px 20px 20px; }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-logo { display: flex; align-items: center; gap: 12px; font-size: 1.8em; font-weight: 900; margin-bottom: 20px; }
+        .footer-links { list-style: none; padding: 0; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; transition: var(--transition); }
+        .footer-links a:hover { color: white; padding-left: 10px; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; text-align: center; }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .page-header h1 { font-size: 2.2em; }
+            .section-header h2 { font-size: 2em; }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fas fa-birthday-cake"></i>
+                <span>KinderFiesta</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/salones">Salones</a></li>
+                <li><a href="/nosotros">Nosotros</a></li>
+                <li><a href="/contacto" style="color: var(--primary-color);">Contacto</a></li>
+                <li><a href="#" class="btn-registrar">Registrar Local</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <section class="page-header">
+        <h1>Contacto y Soporte</h1>
+        <p>Estamos aquí para ayudarte a encontrar el salón perfecto o para que tu venue se una a nuestra plataforma</p>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Múltiples Formas de <span class="highlight">Contactarnos</span></h2>
+                <p>Elige el método más conveniente para comunicarte con nuestro equipo</p>
+            </div>
+            
+            <div class="contacto-grid">
+<div class="contacto-card">
+    <div class="contacto-icon telefono">
+        <i class="fas fa-phone-alt"></i>
+    </div>
+    <h3>Teléfono</h3>
+    <p>Atención inmediata para consultas urgentes</p>
+    <a href="tel:+59167107296" class="contacto-link" style="color: var(--primary-color);">+591 67107296</a>
+    <p class="contacto-horario">Lun - Vie: 8:00 - 18:00</p>
+</div>
+
+                
+<div class="contacto-card">
+    <div class="contacto-icon email">
+        <i class="fas fa-envelope"></i>
+    </div>
+    <h3>Email</h3>
+    <p>Para consultas detalladas y documentación</p>
+    <a href="mailto:kinderfiesta2025@gmail.com" class="contacto-link" style="color: var(--secondary-color);">kinderfiesta2025@gmail.com</a>
+    <p class="contacto-horario">Respuesta en 24 horas</p>
+</div>
+                
+<div class="contacto-card">
+    <div class="contacto-icon whatsapp">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+    <h3>WhatsApp</h3>
+    <p>Chat directo para respuestas rápidas</p>
+    <a href="https://wa.me/59167107296" class="contacto-link" style="color: #25D366;">+591 67107296</a>
+    <p class="contacto-horario">Disponible 24/7</p>
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-logo">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>KinderFiesta</span>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.8;">
+                        Conectamos familias en El Alto con los mejores salones infantiles para fiestas inolvidables y momentos mágicos.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 style="font-size: 1.3em; font-weight: 800; margin-bottom: 20px;">Enlaces Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/salones">Salones</a></li>
+                        <li><a href="/nosotros">Nosotros</a></li>
+                        <li><a href="/contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                
+<div>
+    <h3 style="font-size: 1.3em; font-weight: 800; margin-bottom: 20px;">Contacto</h3>
+    <ul class="footer-links">
+        <li style="display: flex; align-items: center; gap: 10px;">
+            <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+            <a href="https://wa.me/59167107296" target="_blank">+591 67107296</a>
+        </li>
+        <li style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-envelope" style="color: var(--primary-color);"></i>
+            <a href="mailto:kinderfiesta2025@gmail.com">kinderfiesta2025@gmail.com</a>
+        </li>
+    </ul>
+</div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p style="color: rgba(255,255,255,0.5);">© 2025 KinderFiesta. Todos los derechos reservados. | Creando momentos mágicos 🎉</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros - KinderFiesta</title>
+    <meta name="description" content="Conoce la historia y misión de KinderFiesta, conectando familias con salones infantiles perfectos.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-color: #FF6B6B;
+            --primary-dark: #EE5A52;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFD93D;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+            --text-color: #333;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        body { font-family: 'Poppins', sans-serif; color: var(--text-color); line-height: 1.6; overflow-x: hidden; }
+        
+        /* NAVBAR */
+        .navbar { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: fixed; width: 100%; top: 0; z-index: 1000; }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.8em; font-weight: 900; color: var(--primary-color); text-decoration: none; }
+        .nav-links { display: flex; list-style: none; gap: 40px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--dark-color); font-weight: 600; transition: var(--transition); }
+        .nav-links a:hover { color: var(--primary-color); }
+        .btn-registrar { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; padding: 12px 30px; border-radius: 25px; font-weight: 700; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
+        
+        /* HEADER */
+        .page-header { background: linear-gradient(135deg, rgba(255, 107, 107, 0.95) 0%, rgba(78, 205, 196, 0.95) 100%), url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1920') center/cover; padding: 150px 20px 100px; text-align: center; color: white; margin-top: 80px; }
+        .page-header h1 { font-size: 3.5em; font-weight: 900; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .page-header p { font-size: 1.3em; font-weight: 300; max-width: 800px; margin: 0 auto; }
+        
+        /* CONTENT */
+        .content-section { padding: 100px 20px; background: white; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 3em; font-weight: 900; color: var(--dark-color); margin-bottom: 15px; }
+        .highlight { color: var(--primary-color); }
+        .section-header p { font-size: 1.2em; color: #666; max-width: 700px; margin: 0 auto; }
+        
+        .historia-content { max-width: 900px; margin: 0 auto; text-align: center; }
+        .historia-content p { font-size: 1.1em; line-height: 1.8; color: #666; margin-bottom: 30px; }
+        
+        .valores-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 60px; }
+        .valor-card { background: white; padding: 40px 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; transition: var(--transition); }
+        .valor-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+        .valor-card.mision { background: linear-gradient(135deg, #FFE5E5 0%, #FFF5E6 100%); }
+        .valor-card.confianza { background: linear-gradient(135deg, #E6F7F7 0%, #F0FFFF 100%); }
+        .valor-card.excelencia { background: linear-gradient(135deg, #FFF9E6 0%, #FFFBF0 100%); }
+        .valor-icon { font-size: 3em; margin-bottom: 20px; }
+        .valor-icon.mision { color: var(--primary-color); }
+        .valor-icon.confianza { color: var(--secondary-color); }
+        .valor-icon.excelencia { color: var(--accent-color); }
+        .valor-card h3 { font-size: 1.5em; font-weight: 800; margin-bottom: 15px; color: var(--dark-color); }
+        .valor-card p { color: #666; line-height: 1.8; }
+        
+        .impacto-section { padding: 100px 20px; background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; text-align: center; margin-top: 60px; }
+        .stat-number { font-size: 4em; font-weight: 900; margin-bottom: 10px; }
+        .stat-label { font-size: 1.2em; font-weight: 600; color: var(--dark-color); }
+        
+        /* FOOTER */
+        footer { background: linear-gradient(135deg, #2D3436 0%, #1e272e 100%); color: white; padding: 60px 20px 20px; }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-logo { display: flex; align-items: center; gap: 12px; font-size: 1.8em; font-weight: 900; margin-bottom: 20px; }
+        .footer-links { list-style: none; padding: 0; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; transition: var(--transition); }
+        .footer-links a:hover { color: white; padding-left: 10px; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; text-align: center; }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .page-header h1 { font-size: 2.2em; }
+            .section-header h2 { font-size: 2em; }
+            .stat-number { font-size: 3em; }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fas fa-birthday-cake"></i>
+                <span>KinderFiesta</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/salones">Salones</a></li>
+                <li><a href="/nosotros" style="color: var(--primary-color);">Nosotros</a></li>
+                <li><a href="/contacto">Contacto</a></li>
+                <li><a href="/registrar-local" class="btn-registrar">Registrar Local</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <section class="page-header">
+        <h1>Nuestra Historia</h1>
+        <p>Conectando Familias con Momentos Mágicos desde 2023</p>
+    </section>
+
+    <!-- HISTORIA -->
+    <section class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Transformando el Estrés en <span class="highlight">Emoción</span></h2>
+            </div>
+            
+            <div class="historia-content">
+                <p>
+                    Desde 2025(inicio), KinderFiesta ha sido el puente entre familias de El Alto y los espacios perfectos para crear celebraciones inolvidables que perdurarán en el corazón.
+                </p>
+                <p>
+                    Todo comenzó cuando Nilea Quispe, madre de dos pequeños en El Alto, pasó semanas buscando el salón perfecto para el cumpleaños de su hija. Entre llamadas sin respuesta, direcciones confusas y información desactualizada, descubrió que muchas familias enfrentaban el mismo desafío. Esta frustración se convirtió en nuestra misión: crear una plataforma que conecte a las familias con espacios verificados, confiables y mágicos.
+                </p>
+                <p>
+                    <strong>"¿Por qué planificar la celebración más importante para nuestros hijos tiene que ser tan complicado?"</strong> se preguntó. Esta pregunta se convirtió en nuestra misión: crear una plataforma que conecte a las familias con espacios verificados, confiables y mágicos.
+                </p>
+                <p>
+                    Hoy, KinderFiesta es más que un directorio. Somos un compañero de confianza que transforma la búsqueda estresante en un proceso emocionante, donde cada familia encuentra exactamente lo que necesita para crear momentos inolvidables.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- VALORES -->
+    <section class="content-section" style="background: var(--light-color);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nuestra Misión y <span class="highlight">Valores</span></h2>
+                <p>Los principios que guían cada decisión que tomamos</p>
+            </div>
+            
+            <div class="valores-grid">
+                <div class="valor-card mision">
+                    <div class="valor-icon mision">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Nuestra Misión</h3>
+                    <p>Conectar familias con espacios perfectos para crear experiencias inolvidables en cada celebración, transformando la búsqueda en una experiencia emocionante.</p>
+                </div>
+                
+                <div class="valor-card confianza">
+                    <div class="valor-icon confianza">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Confianza</h3>
+                    <p>Cada salón en nuestra plataforma es verificado personalmente. La seguridad de las familias y la calidad de los espacios son nuestra prioridad absoluta.</p>
+                </div>
+                
+                <div class="valor-card excelencia">
+                    <div class="valor-icon excelencia">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Excelencia</h3>
+                    <p>No nos limitamos a encontrar espacios, seleccionamos cuidadosamente salones que cumplan nuestros estándares de calidad, seguridad y servicio.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IMPACTO -->
+    <section class="impacto-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nuestro Impacto en <span class="highlight">Números</span></h2>
+                <p>Cada número representa familias felices y celebraciones inolvidables</p>
+            </div>
+            
+<div class="stats-grid">
+    <div>
+        <div class="stat-number" style="color: var(--primary-color);">{{ stats.familias }}+</div>
+        <div class="stat-label">Familias Conectadas</div>
+    </div>
+    <div>
+        <div class="stat-number" style="color: var(--secondary-color);">{{ stats.salones }}+</div>
+        <div class="stat-label">Salones Verificados</div>
+    </div>
+    <div>
+        <div class="stat-number" style="color: var(--primary-color);">{{ stats.tiempo_respuesta }}</div>
+        <div class="stat-label">Tiempo de Respuesta</div>
+    </div>
+</div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-logo">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>KinderFiesta</span>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.8;">
+                        Conectamos familias en El Alto con los mejores salones infantiles para fiestas inolvidables y momentos mágicos.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 style="font-size: 1.3em; font-weight: 800; margin-bottom: 20px;">Enlaces Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/salones">Salones</a></li>
+                        <li><a href="/nosotros">Nosotros</a></li>
+                        <li><a href="/contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="font-size: 1.3em; font-weight: 800; margin-bottom: 20px;">Contacto</h3>
+                    <ul class="footer-links">
+                <li style="display: flex; align-items: center; gap: 10px;">
+    <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+    <a href="https://wa.me/59167107296" target="_blank">+591 67107296</a>
+</li>
+<li style="display: flex; align-items: center; gap: 10px;">
+    <i class="fas fa-envelope" style="color: var(--primary-color);"></i>
+    <a href="mailto:kinderfiesta2025@gmail.com">kinderfiesta2025@gmail.com</a>
+</li>
+
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p style="color: rgba(255,255,255,0.5);">© 2025 KinderFiesta. Todos los derechos reservados. | Creando momentos mágicos 🎉</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

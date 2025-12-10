@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Salones - KinderFiesta Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-color: #FF6B6B;
+            --primary-dark: #EE5A52;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFD93D;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+            --sidebar-width: 280px;
+        }
+        body { font-family: 'Poppins', sans-serif; background: #f5f7fa; color: var(--dark-color); }
+        
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            padding: 35px 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-header i {
+            font-size: 3em;
+            color: white;
+            margin-bottom: 10px;
+        }
+        .sidebar-header h2 {
+            color: white;
+            font-size: 1.5em;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        .sidebar-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85em;
+        }
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        .menu-item {
+            padding: 18px 30px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--accent-color);
+        }
+        .menu-item.active {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border-left-color: white;
+        }
+        .menu-item i {
+            font-size: 1.3em;
+            width: 25px;
+        }
+        .logout-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            padding: 15px;
+            background: rgba(255,107,107,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .logout-btn:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 25px 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .page-title i {
+            font-size: 2em;
+            color: var(--primary-color);
+        }
+        .page-title h1 {
+            font-size: 2.2em;
+            font-weight: 900;
+            color: var(--dark-color);
+        }
+        .page-subtitle {
+            color: #666;
+            font-size: 1em;
+            margin-left: 65px;
+        }
+        .top-actions {
+            display: flex;
+            gap: 15px;
+        }
+        .btn-action {
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        .btn-secondary {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        /* FILTROS Y BÚSQUEDA */
+        .filters-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        .filter-group input, .filter-group select {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        .filter-group input:focus, .filter-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+        
+        /* STATS RÁPIDAS */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-mini {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            border-top: 4px solid var(--stat-color);
+        }
+        .stat-mini i {
+            font-size: 2em;
+            color: var(--stat-color);
+            margin-bottom: 10px;
+        }
+        .stat-mini h3 {
+            font-size: 2em;
+            font-weight: 900;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+        .stat-mini p {
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        /* LAYOUT DE SALONES */
+        .salones-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+        
+        /* LISTA DE SALONES */
+        .salones-list {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            padding: 25px;
+            max-height: calc(100vh - 350px);
+            overflow-y: auto;
+        }
+        .salones-list h3 {
+            font-size: 1.3em;
+            font-weight: 800;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .salones-list h3 span {
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+        }
+        .salon-item {
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background: var(--light-color);
+        }
+        .salon-item:hover {
+            background: #E8F4F8;
+            border-color: var(--secondary-color);
+            transform: translateX(5px);
+        }
+        .salon-item.active {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
+            border-color: var(--primary-color);
+        }
+        .salon-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .salon-item h4 {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: var(--dark-color);
+            flex: 1;
+        }
+        .salon-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+        .badge-visible {
+            background: #D4EDDA;
+            color: #155724;
+        }
+        .badge-oculto {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+        .salon-item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.85em;
+            color: #666;
+        }
+        .salon-item-info i {
+            color: var(--primary-color);
+        }
+        
+        /* DETALLE DEL SALÓN */
+        .salon-detail {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            padding: 35px;
+        }
+        .salon-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid var(--light-color);
+        }
+        .salon-detail-title h2 {
+            font-size: 2em;
+            font-weight: 900;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+        .salon-detail-title p {
+            color: #666;
+            font-size: 1em;
+        }
+        .salon-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+        .btn-toggle {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .btn-toggle:hover {
+            background: #3DB8AF;
+            transform: translateY(-2px);
+        }
+        .btn-delete {
+            background: var(--primary-color);
+            color: white;
+        }
+        .btn-delete:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        /* INFO GRID */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .info-item {
+            display: flex;
+            align-items: start;
+            gap: 15px;
+            padding: 20px;
+            background: var(--light-color);
+            border-radius: 12px;
+        }
+        .info-item i {
+            font-size: 1.8em;
+            color: var(--primary-color);
+            width: 35px;
+        }
+        .info-item-content h4 {
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .info-item-content p {
+            color: #666;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+        
+        /* COMENTARIOS */
+        .comentarios-section {
+            margin-top: 30px;
+        }
+        .comentarios-section h3 {
+            font-size: 1.5em;
+            font-weight: 800;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .comentario-card {
+            background: var(--light-color);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--secondary-color);
+        }
+        .comentario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .comentario-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .comentario-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+        }
+        .comentario-info h5 {
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 3px;
+        }
+        .comentario-rating {
+            color: var(--accent-color);
+            font-size: 0.9em;
+        }
+        .comentario-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-small {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+        }
+        .btn-edit {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .btn-edit:hover {
+            background: #3DB8AF;
+        }
+        .btn-remove {
+            background: var(--primary-color);
+            color: white;
+        }
+        .btn-remove:hover {
+            background: var(--primary-dark);
+        }
+        .comentario-texto {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        .comentario-fecha {
+            text-align: right;
+            color: #999;
+            font-size: 0.8em;
+            margin-top: 10px;
+        }
+        .no-comentarios {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            color: #999;
+        }
+        .empty-state i {
+            font-size: 5em;
+            margin-bottom: 20px;
+            color: #DDD;
+        }
+        .empty-state h3 {
+            font-size: 1.5em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        /* MODAL EDITAR COMENTARIO */
+        .modal-overlay-edit {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-overlay-edit.active {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-edit-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-edit-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 30px;
+            border-radius: 20px 20px 0 0;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-edit-header h3 {
+            font-size: 1.8em;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .modal-close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .modal-close-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+        .modal-edit-body {
+            padding: 40px;
+        }
+        .form-group-modal {
+            margin-bottom: 25px;
+        }
+        .form-group-modal label {
+            display: block;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        .form-group-modal input, .form-group-modal textarea {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #E8E8E8;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        .form-group-modal input:focus, .form-group-modal textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+        }
+        .form-group-modal textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .rating-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .rating-option {
+            padding: 12px 20px;
+            border: 2px solid #E8E8E8;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            background: white;
+        }
+        .rating-option:hover {
+            border-color: var(--accent-color);
+            background: #FFF9E6;
+        }
+        .rating-option.active {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: white;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .btn-modal {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .btn-save {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #3DB8AF 100%);
+            color: white;
+        }
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.4);
+        }
+        .btn-cancel {
+            background: #E8E8E8;
+            color: var(--dark-color);
+        }
+        .btn-cancel:hover {
+            background: #D8D8D8;
+        }
+        
+        @media (max-width: 1400px) {
+            .salones-layout {
+                grid-template-columns: 1fr;
+            }
+            .salones-list {
+                max-height: 400px;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <i class="fas fa-crown"></i>
+        <h2>Admin</h2>
+        <p>KinderFiesta</p>
+    </div>
+    
+    <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="menu-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/admin/panel" class="menu-item active">
+            <i class="fas fa-store"></i>
+            <span>Gestionar Salones</span>
+        </a>
+        <a href="/admin/dashboard#solicitudes" class="menu-item">
+            <i class="fas fa-inbox"></i>
+            <span>Solicitudes</span>
+        </a>
+        <a href="/" class="menu-item">
+            <i class="fas fa-home"></i>
+            <span>Página Principal</span>
+        </a>
+    </div>
+    
+    <button class="logout-btn" onclick="location.href='/admin/logout'">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+    </button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div>
+            <div class="page-title">
+                <i class="fas fa-cogs"></i>
+                <h1>Gestionar Salones</h1>
+            </div>
+            <p class="page-subtitle">Administra todos tus salones infantiles</p>
+        </div>
+        <div class="top-actions">
+            <a href="/admin/dashboard" class="btn-action btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver al Dashboard
+            </a>
+            <button class="btn-action btn-primary" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Actualizar
+            </button>
+        </div>
+    </div>
+    
+    <!-- STATS RÁPIDAS -->
+    <div class="quick-stats">
+        <div class="stat-mini" style="--stat-color: #FF6B6B;">
+            <i class="fas fa-store"></i>
+            <h3 id="totalSalones">0</h3>
+            <p>Total Salones</p>
+        </div>
+        <div class="stat-mini" style="--stat-color: #4ECDC4;">
+            <i class="fas fa-eye"></i>
+            <h3 id="salonesVisibles">0</h3>
+            <p>Visibles</p>
+        </div>
+        <div class="stat-mini" style="--stat-color: #FFD93D;">
+            <i class="fas fa-eye-slash"></i>
+            <h3 id="salonesOcultos">0</h3>
+            <p>Ocultos</p>
+        </div>
+        <div class="stat-mini" style="--stat-color: #A29BFE;">
+            <i class="fas fa-comments"></i>
+            <h3 id="totalComentarios">0</h3>
+            <p>Comentarios</p>
+        </div>
+    </div>
+    
+    <!-- FILTROS -->
+    <div class="filters-section">
+        <div class="filters-grid">
+            <div class="filter-group">
+                <label><i class="fas fa-search"></i> Buscar salón</label>
+                <input type="text" id="searchInput" placeholder="Nombre, dirección o categoría..." onkeyup="filtrarSalones()">
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-filter"></i> Visibilidad</label>
+                <select id="visibilityFilter" onchange="filtrarSalones()">
+                    <option value="">Todos</option>
+                    <option value="1">Visibles</option>
+                    <option value="0">Ocultos</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-star"></i> Rating</label>
+                <select id="ratingFilter" onchange="filtrarSalones()">
+                    <option value="">Todos</option>
+                    <option value="5">5 estrellas</option>
+                    <option value="4">4+ estrellas</option>
+                    <option value="3">3+ estrellas</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <button class="btn-action btn-primary" onclick="limpiarFiltros()" style="margin-top: 26px;">
+                    <i class="fas fa-eraser"></i> Limpiar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- LAYOUT: LISTA + DETALLE -->
+    <div class="salones-layout">
+        <!-- LISTA DE SALONES -->
+        <div class="salones-list">
+            <h3>Salones <span id="salonCount">0</span></h3>
+            <div id="salonesListContainer">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>Cargando salones...</h3>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DETALLE DEL SALÓN -->
+        <div class="salon-detail">
+            <div id="salonDetailContainer">
+                <div class="empty-state">
+                    <i class="fas fa-hand-pointer"></i>
+                    <h3>Selecciona un salón</h3>
+                    <p>Haz clic en un salón de la lista para ver sus detalles</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR COMENTARIO -->
+<div id="modalEditarComentario" class="modal-overlay-edit">
+    <div class="modal-edit-content">
+        <div class="modal-edit-header">
+            <h3>
+                <i class="fas fa-edit"></i>
+                Editar Comentario
+            </h3>
+            <button class="modal-close-btn" onclick="cerrarModalEditar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-edit-body">
+            <form id="formEditarComentario" onsubmit="guardarEdicion(event)">
+                <div class="form-group-modal">
+                    <label><i class="fas fa-user"></i> Nombre del Usuario</label>
+                    <input type="text" id="editNombre" required placeholder="Ej: María López">
+                </div>
+                
+                <div class="form-group-modal">
+                    <label><i class="fas fa-star"></i> Calificación</label>
+                    <div class="rating-selector">
+                        <div class="rating-option" data-rating="1" onclick="seleccionarRating(1)">
+                            ★ 1
+                        </div>
+                        <div class="rating-option" data-rating="2" onclick="seleccionarRating(2)">
+                            ★★ 2
+                        </div>
+                        <div class="rating-option" data-rating="3" onclick="seleccionarRating(3)">
+                            ★★★ 3
+                        </div>
+                        <div class="rating-option" data-rating="4" onclick="seleccionarRating(4)">
+                            ★★★★ 4
+                        </div>
+                        <div class="rating-option" data-rating="5" onclick="seleccionarRating(5)">
+                            ★★★★★ 5
+                        </div>
+                    </div>
+                    <input type="hidden" id="editRating" required>
+                </div>
+                
+                <div class="form-group-modal">
+                    <label><i class="fas fa-comment"></i> Comentario</label>
+                    <textarea id="editComentario" required placeholder="Escribe el comentario aquí..." maxlength="500"></textarea>
+                    <div style="text-align: right; color: #999; font-size: 0.9em; margin-top: 5px;">
+                        <span id="charCount">0</span>/500 caracteres
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal btn-cancel" onclick="cerrarModalEditar()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn-modal btn-save">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let salones = [];
+    let salonSeleccionado = null;
+    let salonesFiltrados = [];
+    let editandoSalonId = null;
+    let editandoReviewId = null;
+    
+    // Cargar salones
+    async function cargarSalones() {
+        try {
+            salones = {{ salones | tojson | safe }};
+            salonesFiltrados = salones;
+            
+            console.log('✅ Salones cargados:', salones.length);
+            
+            actualizarStats();
+            mostrarListaSalones();
+            
+            if (salones.length > 0) {
+                seleccionarSalon(salones[0].id);
+            }
+        } catch (error) {
+            console.error('❌ Error al cargar salones:', error);
+            document.getElementById('salonesListContainer').innerHTML = `
+                <div class="no-comentarios">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Error al cargar salones</p>
+                    <button class="btn-action btn-primary" onclick="location.reload()" style="margin-top: 15px;">
+                        <i class="fas fa-sync-alt"></i> Reintentar
+                    </button>
+                </div>
+            `;
+        }
+    }
+    
+    // Actualizar estadísticas
+    function actualizarStats() {
+        const visibles = salones.filter(s => s.visible === 1).length;
+        const ocultos = salones.length - visibles;
+        const totalComentarios = salones.reduce((sum, s) => sum + (s.reviews ? s.reviews.length : 0), 0);
+        
+        document.getElementById('totalSalones').textContent = salones.length;
+        document.getElementById('salonesVisibles').textContent = visibles;
+        document.getElementById('salonesOcultos').textContent = ocultos;
+        document.getElementById('totalComentarios').textContent = totalComentarios;
+    }
+    
+    // Mostrar lista de salones
+    function mostrarListaSalones() {
+        const container = document.getElementById('salonesListContainer');
+        document.getElementById('salonCount').textContent = salonesFiltrados.length;
+        
+        if (salonesFiltrados.length === 0) {
+            container.innerHTML = `
+                <div class="no-comentarios">
+                    <i class="fas fa-search"></i>
+                    <p>No se encontraron salones</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = salonesFiltrados.map(salon => {
+            const rating = salon.rating ? parseFloat(salon.rating) : 0;
+            const reviewCount = salon.reviews ? salon.reviews.length : 0;
+            
+            return `
+                <div class="salon-item ${salonSeleccionado === salon.id ? 'active' : ''}" onclick="seleccionarSalon(${salon.id})">
+                    <div class="salon-item-header">
+                        <h4>${salon.name}</h4>
+                        <span class="salon-badge ${salon.visible === 1 ? 'badge-visible' : 'badge-oculto'}">
+                            ${salon.visible === 1 ? 'Visible' : 'Oculto'}
+                        </span>
+                    </div>
+                    <div class="salon-item-info">
+                        <span><i class="fas fa-star"></i> ${rating.toFixed(1)}</span>
+                        <span><i class="fas fa-comments"></i> ${reviewCount}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Seleccionar salón
+    function seleccionarSalon(salonId) {
+        salonSeleccionado = salonId;
+        const salon = salones.find(s => s.id === salonId);
+        
+        if (!salon) return;
+        
+        const rating = salon.rating ? parseFloat(salon.rating) : 0;
+        const estrellas = '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
+        
+        document.getElementById('salonDetailContainer').innerHTML = `
+            <div class="salon-detail-header">
+                <div class="salon-detail-title">
+                    <h2>${salon.name}</h2>
+                    <p>${salon.category}</p>
+                </div>
+                <div class="salon-actions">
+                    <button class="btn-icon btn-toggle" onclick="toggleVisibilidad(${salon.id})" title="${salon.visible === 1 ? 'Ocultar' : 'Mostrar'}">
+                        <i class="fas fa-${salon.visible === 1 ? 'eye-slash' : 'eye'}"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" onclick="eliminarSalon(${salon.id})" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="info-item-content">
+                        <h4>Dirección</h4>
+                        <p>${salon.address}</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <div class="info-item-content">
+                        <h4>Teléfono</h4>
+                        <p>${salon.phone}</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-star"></i>
+                    <div class="info-item-content">
+                        <h4>Calificación</h4>
+                        <p>${estrellas} ${rating.toFixed(1)}/5.0</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-comments"></i>
+                    <div class="info-item-content">
+                        <h4>Comentarios</h4>
+                        <p>${salon.reviews ? salon.reviews.length : 0} reseñas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comentarios-section">
+                <h3><i class="fas fa-comments"></i> Comentarios</h3>
+                ${mostrarComentarios(salon)}
+            </div>
+        `;
+        
+        mostrarListaSalones();
+    }
+    
+    // Mostrar comentarios
+    function mostrarComentarios(salon) {
+        if (!salon.reviews || salon.reviews.length === 0) {
+            return '<div class="no-comentarios"><i class="fas fa-comment-slash"></i><p>No hay comentarios</p></div>';
+        }
+        
+        return salon.reviews.map(review => {
+            const iniciales = review.nombre.split(' ').map(n => n[0]).join('').substring(0, 2);
+            const estrellas = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            const fecha = new Date(review.fecha).toLocaleDateString('es-ES');
+            
+            return `
+                <div class="comentario-card">
+                    <div class="comentario-header">
+                        <div class="comentario-user">
+                            <div class="comentario-avatar">${iniciales}</div>
+                            <div class="comentario-info">
+                                <h5>${review.nombre}</h5>
+                                <div class="comentario-rating">${estrellas}</div>
+                            </div>
+                        </div>
+                        <div class="comentario-actions">
+                            <button class="btn-small btn-edit" onclick="editarComentario(${salon.id}, ${review.id})">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn-small btn-remove" onclick="eliminarComentario(${salon.id}, ${review.id})">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                    <p class="comentario-texto">"${review.comentario}"</p>
+                    <p class="comentario-fecha">${fecha}</p>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Filtrar salones
+    function filtrarSalones() {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const visibility = document.getElementById('visibilityFilter').value;
+        const rating = document.getElementById('ratingFilter').value;
+        
+        salonesFiltrados = salones.filter(salon => {
+            const matchSearch = !search || 
+                salon.name.toLowerCase().includes(search) ||
+                salon.address.toLowerCase().includes(search) ||
+                salon.category.toLowerCase().includes(search);
+            
+            const matchVisibility = !visibility || salon.visible === parseInt(visibility);
+            
+            const salonRating = salon.rating ? parseFloat(salon.rating) : 0;
+            const matchRating = !rating || salonRating >= parseInt(rating);
+            
+            return matchSearch && matchVisibility && matchRating;
+        });
+        
+        mostrarListaSalones();
+    }
+    
+    // Limpiar filtros
+    function limpiarFiltros() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('visibilityFilter').value = '';
+        document.getElementById('ratingFilter').value = '';
+        salonesFiltrados = salones;
+        mostrarListaSalones();
+    }
+    
+    // Toggle visibilidad
+    async function toggleVisibilidad(salonId) {
+        const salon = salones.find(s => s.id === salonId);
+        const nuevoEstado = salon.visible === 1 ? 0 : 1;
+        
+        try {
+            const response = await fetch(`/api/admin/salon/${salonId}/visibilidad`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ visible: nuevoEstado === 1 })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                salon.visible = nuevoEstado;
+                actualizarStats();
+                seleccionarSalon(salonId);
+                alert(`✅ Salón ${nuevoEstado === 1 ? 'visible' : 'oculto'} exitosamente`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('❌ Error al cambiar visibilidad');
+        }
+    }
+    
+    // Eliminar salón
+    async function eliminarSalon(salonId) {
+        if (!confirm('¿Estás seguro de eliminar este salón? Esta acción no se puede deshacer.')) return;
+        
+        try {
+            const response = await fetch(`/api/admin/salon/${salonId}`, {
+                method: 'DELETE'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                salones = salones.filter(s => s.id !== salonId);
+                salonesFiltrados = salonesFiltrados.filter(s => s.id !== salonId);
+                actualizarStats();
+                mostrarListaSalones();
+                document.getElementById('salonDetailContainer').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-hand-pointer"></i>
+                        <h3>Selecciona un salón</h3>
+                    </div>
+                `;
+                alert('✅ Salón eliminado exitosamente');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('❌ Error al eliminar salón');
+        }
+    }
+    
+    // Eliminar comentario
+    async function eliminarComentario(salonId, reviewId) {
+        if (!confirm('¿Eliminar este comentario?')) return;
+        
+        try {
+            const response = await fetch(`/api/admin/comentario/${salonId}/${reviewId}`, {
+                method: 'DELETE'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                const salon = salones.find(s => s.id === salonId);
+                salon.reviews = salon.reviews.filter(r => r.id !== reviewId);
+                salon.rating = data.nuevo_promedio;
+                seleccionarSalon(salonId);
+                actualizarStats();
+                alert('✅ Comentario eliminado');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('❌ Error al eliminar comentario');
+        }
+    }
+    
+    // MODAL EDITAR - Abrir
+    function editarComentario(salonId, reviewId) {
+        const salon = salones.find(s => s.id === salonId);
+        const review = salon.reviews.find(r => r.id === reviewId);
+        
+        editandoSalonId = salonId;
+        editandoReviewId = reviewId;
+        
+        // Llenar formulario
+        document.getElementById('editNombre').value = review.nombre;
+        document.getElementById('editRating').value = review.rating;
+        document.getElementById('editComentario').value = review.comentario;
+        document.getElementById('charCount').textContent = review.comentario.length;
+        
+        // Marcar rating
+        document.querySelectorAll('.rating-option').forEach(opt => {
+            opt.classList.remove('active');
+            if (parseInt(opt.dataset.rating) === review.rating) {
+                opt.classList.add('active');
+            }
+        });
+        
+        // Mostrar modal
+        document.getElementById('modalEditarComentario').classList.add('active');
+    }
+    
+    // MODAL EDITAR - Cerrar
+    function cerrarModalEditar() {
+        document.getElementById('modalEditarComentario').classList.remove('active');
+        editandoSalonId = null;
+        editandoReviewId = null;
+    }
+    
+    // MODAL EDITAR - Seleccionar rating
+    function seleccionarRating(rating) {
+        document.getElementById('editRating').value = rating;
+        document.querySelectorAll('.rating-option').forEach(opt => {
+            opt.classList.remove('active');
+            if (parseInt(opt.dataset.rating) === rating) {
+                opt.classList.add('active');
+            }
+        });
+    }
+    
+    // MODAL EDITAR - Guardar
+    function guardarEdicion(event) {
+        event.preventDefault();
+        
+        const nuevoNombre = document.getElementById('editNombre').value.trim();
+        const nuevoRating = parseInt(document.getElementById('editRating').value);
+        const nuevoComentario = document.getElementById('editComentario').value.trim();
+        
+        if (!nuevoNombre || !nuevoRating || !nuevoComentario) {
+            alert('⚠️ Todos los campos son obligatorios');
+            return;
+        }
+        
+        if (nuevoRating < 1 || nuevoRating > 5) {
+            alert('⚠️ La calificación debe estar entre 1 y 5');
+            return;
+        }
+        
+        fetch(`/api/admin/comentario/${editandoSalonId}/${editandoReviewId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nombre: nuevoNombre,
+                comentario: nuevoComentario,
+                rating: nuevoRating
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const salon = salones.find(s => s.id === editandoSalonId);
+                const review = salon.reviews.find(r => r.id === editandoReviewId);
+                review.nombre = nuevoNombre;
+                review.comentario = nuevoComentario;
+                review.rating = nuevoRating;
+                
+                seleccionarSalon(editandoSalonId);
+                cerrarModalEditar();
+                alert('✅ Comentario actualizado exitosamente');
+            } else {
+                alert('❌ Error: ' + (data.error || 'No se pudo actualizar'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Error al actualizar el comentario');
+        });
+    }
+    
+    // Contador de caracteres
+    document.addEventListener('DOMContentLoaded', function() {
+        const textarea = document.getElementById('editComentario');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                document.getElementById('charCount').textContent = this.value.length;
+            });
+        }
+        
+        // Cerrar modal al hacer clic fuera
+        const modal = document.getElementById('modalEditarComentario');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    cerrarModalEditar();
+                }
+            });
+        }
+    });
+    
+    // Cargar al inicio
+    cargarSalones();
+</script>
+</body>
+</html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinderFiesta - El Mejor Salón Infantil en El Alto, Bolivia</title>
+    <meta name="description" content="Encuentra el salón infantil perfecto para celebraciones inolvidables en El Alto, Bolivia.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-color: #FF6B6B;
+            --primary-dark: #EE5A52;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFD93D;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+            --text-color: #333;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        body { font-family: 'Poppins', sans-serif; color: var(--text-color); line-height: 1.6; overflow-x: hidden; }
+        
+        /* NAVBAR */
+        .navbar { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: fixed; width: 100%; top: 0; z-index: 1000; transition: var(--transition); }
+        .navbar.scrolled { padding: 10px 0; box-shadow: 0 4px 30px rgba(0,0,0,0.15); }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.8em; font-weight: 900; color: var(--primary-color); text-decoration: none; }
+        .logo i { font-size: 1.3em; }
+        .nav-links { display: flex; list-style: none; gap: 40px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--dark-color); font-weight: 600; font-size: 1em; transition: var(--transition); position: relative; }
+        .nav-links a:hover { color: var(--primary-color); }
+        .btn-registrar { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; padding: 12px 30px; border-radius: 25px; font-weight: 700; border: none; cursor: pointer; transition: var(--transition); text-decoration: none; display: inline-block; }
+        .btn-registrar:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4); }
+        
+        /* SEARCH */
+        .search-section { background: white; padding: 40px 20px; margin: -60px auto 0; max-width: 900px; border-radius: var(--border-radius); box-shadow: 0 10px 40px rgba(0,0,0,0.1); position: relative; z-index: 10; }
+        .search-box { display: flex; gap: 15px; flex-wrap: wrap; }
+        .search-box input { flex: 1; min-width: 250px; padding: 18px 25px; border: 2px solid #E8E8E8; border-radius: var(--border-radius); font-size: 1em; font-family: 'Poppins', sans-serif; transition: var(--transition); }
+        .search-box input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1); }
+        .search-box button { padding: 18px 40px; background: var(--primary-color); color: white; border: none; border-radius: var(--border-radius); font-weight: 700; font-size: 1em; cursor: pointer; transition: var(--transition); }
+        .search-box button:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        
+        /* CONTAINER */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 3em; font-weight: 900; color: var(--dark-color); margin-bottom: 15px; }
+        .highlight { color: var(--primary-color); }
+        .section-header p { font-size: 1.2em; color: #666; max-width: 700px; margin: 0 auto; }
+        
+        /* COMO FUNCIONA */
+        .como-funciona { padding: 100px 20px; background: white; }
+        .pasos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-top: 60px; }
+        .paso-card { text-align: center; padding: 30px 20px; position: relative; }
+        .paso-numero { width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2em; font-weight: 900; margin: 0 auto 25px; box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3); }
+        .paso-card h3 { font-size: 1.4em; font-weight: 800; margin-bottom: 15px; color: var(--dark-color); }
+        .paso-card p { color: #666; line-height: 1.8; }
+        
+        /* SALONES DESTACADOS */
+        .salones-destacados { padding: 100px 20px; background: var(--light-color); }
+        .salones-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; margin-top: 40px; }
+        .salon-card { background: white; border-radius: var(--border-radius); overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: var(--transition); cursor: pointer; position: relative; }
+        .salon-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+        .salon-image { width: 100%; height: 250px; object-fit: cover; }
+        .verified-badge { position: absolute; top: 15px; left: 15px; background: var(--secondary-color); color: white; padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 0.85em; display: flex; align-items: center; gap: 5px; }
+        .salon-content { padding: 25px; }
+        .salon-name { font-size: 1.5em; font-weight: 800; color: var(--dark-color); margin-bottom: 10px; }
+        .salon-location { color: #666; font-size: 0.95em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .btn-ver-mas { display: block; text-align: center; margin: 50px auto 0; padding: 18px 50px; background: var(--primary-color); color: white; border-radius: 30px; font-weight: 700; font-size: 1.1em; text-decoration: none; transition: var(--transition); max-width: 300px; }
+        .btn-ver-mas:hover { background: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4); }
+        
+        /* POR QUE ELEGIRNOS */
+        .por-que { padding: 100px 20px; background: white; }
+        .beneficios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 60px; }
+        .beneficio-card { background: linear-gradient(135deg, #FFF5F5 0%, #F0FFFF 100%); padding: 40px 30px; border-radius: 15px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: var(--transition); }
+        .beneficio-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+        .beneficio-icon { font-size: 4em; margin-bottom: 20px; }
+        .beneficio-card h3 { font-size: 1.5em; font-weight: 800; margin-bottom: 15px; color: var(--dark-color); }
+        .beneficio-card p { color: #666; line-height: 1.8; }
+        
+        /* TESTIMONIOS */
+        .testimonios { padding: 100px 20px; background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(78, 205, 196, 0.05) 100%); }
+        .testimonios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 60px; }
+        .testimonio-card { background: white; padding: 35px 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); position: relative; }
+        .testimonio-stars { color: var(--accent-color); font-size: 1.3em; margin-bottom: 15px; }
+        .testimonio-texto { color: #666; font-style: italic; line-height: 1.8; margin-bottom: 20px; }
+        .testimonio-autor { display: flex; align-items: center; gap: 15px; }
+        .testimonio-avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.2em; }
+        .testimonio-info h4 { font-weight: 700; color: var(--dark-color); }
+        .testimonio-info p { font-size: 0.9em; color: #999; }
+        
+        /* IMPACTO */
+        .impacto-section { padding: 100px 20px; background: white; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; text-align: center; margin-top: 60px; }
+        .stat-number { font-size: 4em; font-weight: 900; margin-bottom: 10px; }
+        .stat-label { font-size: 1.2em; font-weight: 600; color: var(--dark-color); }
+        
+        /* FOOTER */
+        footer { background: linear-gradient(135deg, #2D3436 0%, #1e272e 100%); color: white; padding: 60px 20px 20px; }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-logo { display: flex; align-items: center; gap: 12px; font-size: 1.8em; font-weight: 900; margin-bottom: 20px; }
+        .footer-links { list-style: none; padding: 0; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; transition: var(--transition); }
+        .footer-links a:hover { color: white; padding-left: 10px; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; text-align: center; }
+        
+        /* ANIMATIONS */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Botón agregar testimonio */
+        .btn-agregar-testimonio {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 25px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+        .btn-agregar-testimonio:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Modal */
+        .modal-testimonio {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            overflow: auto;
+        }
+        .modal-content-testimonio {
+            background: white;
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 2em;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .close-modal:hover {
+            color: var(--primary-color);
+        }
+
+        /* Estrellas */
+        .estrellas-rating {
+            display: flex;
+            gap: 10px;
+            font-size: 2.5em;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .estrellas-rating i {
+            color: #DDD;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .estrellas-rating i:hover,
+        .estrellas-rating i.active {
+            color: var(--accent-color);
+            transform: scale(1.2);
+        }
+
+        /* Formulario */
+        .form-group-testimonio {
+            margin-bottom: 25px;
+        }
+        .form-group-testimonio label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        .form-group-testimonio textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            resize: vertical;
+        }
+        .form-group-testimonio textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+        .btn-enviar-testimonio {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-enviar-testimonio:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .search-box { flex-direction: column; }
+            .search-box input { min-width: 100%; }
+            .section-header h2 { font-size: 2em; }
+            .stat-number { font-size: 3em; }
+            .salones-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">
+            <i class="fas fa-birthday-cake"></i>
+            <span>KinderFiesta</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="/" style="color: var(--primary-color);">Inicio</a></li>
+            <li><a href="/salones">Salones</a></li>
+            <li><a href="/nosotros">Nosotros</a></li>
+            <li><a href="/contacto">Contacto</a></li>
+            
+            {% if session.get('user_logged_in') %}
+                <li style="color: var(--dark-color); font-weight: 600;">
+                    <i class="fas fa-user-circle" style="color: var(--secondary-color);"></i>
+                    {{ session.get('user_nombre') }}
+                </li>
+                <li><a href="/logout" style="color: #999;">Cerrar Sesión</a></li>
+            {% else %}
+                <li><a href="/login" class="btn-login-nav">Iniciar Sesión</a></li>
+            {% endif %}
+            
+            <li><a href="/registrar-local" class="btn-registrar">Registrar Local</a></li>
+        </ul>
+    </div>
+</nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Encuentra el Salón Infantil Perfecto</h1>
+            <p>🎉 El mejor directorio de salones infantiles en El Alto, Bolivia</p>
+            <div class="hero-buttons">
+                <a href="/salones" class="btn-primary">Explorar Salones</a>
+                <a href="/contacto" class="btn-secondary">Contactar Equipo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEARCH SECTION -->
+    <div class="container">
+        <div class="search-section">
+           <div class="search-box">
+              <form action="/buscar" method="GET" style="display: flex; gap: 10px; width: 100%;">
+              <input type="text" name="q" placeholder="🔍 Buscar salón por nombre..." required style="flex: 1;">
+        <button type="submit">Buscar</button>
+    </form>
+</div>
+
+        </div>
+    </div>
+
+    <!-- COMO FUNCIONA -->
+    <section class="como-funciona">
+        <div class="container">
+            <div class="section-header">
+                <h2>¿Cómo <span class="highlight">Funciona</span>?</h2>
+                <p>Encuentra tu salón ideal en 4 simples pasos</p>
+            </div>
+            
+            <div class="pasos-grid">
+                <div class="paso-card">
+                    <div class="paso-numero">1</div>
+                    <h3>Busca</h3>
+                    <p>Explora nuestra colección de salones verificados en El Alto con fotos, ubicaciones y reseñas reales.</p>
+                </div>
+                <div class="paso-card">
+                    <div class="paso-numero">2</div>
+                    <h3>Compara</h3>
+                    <p>Revisa precios, servicios, ubicaciones y calificaciones para encontrar el que mejor se adapte a tus necesidades.</p>
+                </div>
+                <div class="paso-card">
+                    <div class="paso-numero">3</div>
+                    <h3>Contacta</h3>
+                    <p>Comunícate directamente con el salón a través de teléfono, WhatsApp o visita su ubicación.</p>
+                </div>
+                <div class="paso-card">
+                    <div class="paso-numero">4</div>
+                    <h3>Celebra</h3>
+                    <p>Disfruta de una celebración inolvidable en el salón perfecto para tu evento especial.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SALONES DESTACADOS -->
+    <section class="salones-destacados">
+        <div class="container">
+            <div class="section-header">
+                <h2>Salones <span class="highlight">Destacados</span> ⭐</h2>
+                <p>Los salones más populares y mejor valorados de nuestra plataforma</p>
+            </div>
+            
+            <div class="salones-grid" id="salonesDestacados">
+                <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 3em; color: var(--primary-color);"></i>
+                    <p style="margin-top: 20px; font-size: 1.1em; color: #666;">Cargando salones destacados...</p>
+                </div>
+            </div>
+            
+            <a href="/salones" class="btn-ver-mas">Ver Todos los Salones</a>
+        </div>
+    </section>
+
+    <!-- POR QUE ELEGIRNOS -->
+    <section class="por-que">
+        <div class="container">
+            <div class="section-header">
+                <h2>¿Por Qué <span class="highlight">Elegirnos</span>?</h2>
+                <p>Características que nos hacen la mejor opción para encontrar tu salón ideal</p>
+            </div>
+            
+            <div class="beneficios-grid">
+                <div class="beneficio-card">
+                    <div class="beneficio-icon" style="color: var(--secondary-color);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>100% Verificados</h3>
+                    <p>Todos nuestros salones son verificados personalmente. Visitamos cada local para garantizar calidad, seguridad y confiabilidad.</p>
+                </div>
+                <div class="beneficio-card">
+                    <div class="beneficio-icon" style="color: var(--primary-color);">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Amplia Variedad</h3>
+                    <p>Desde salones pequeños hasta espacios grandes. Encuentra opciones para todos los presupuestos y necesidades en El Alto.</p>
+                </div>
+                <div class="beneficio-card">
+                    <div class="beneficio-icon" style="color: var(--accent-color);">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Soporte 24/7</h3>
+                    <p>Nuestro equipo está disponible para ayudarte en cualquier momento. Respuesta garantizada en menos de 24 horas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- TESTIMONIOS -->
+<section class="testimonios">
+    <div class="container">
+        <div class="section-header">
+            <h2>Lo Que Dicen las <span class="highlight">Familias</span></h2>
+            <p>Testimonios reales de familias que encontraron su salón perfecto</p>
+        </div>
+        
+        <!-- Botón para agregar testimonio (solo usuarios logeados) -->
+        {% if session.get('user_logged_in') %}
+        <div style="text-align: center; margin-bottom: 40px;">
+            <button onclick="abrirModalTestimonio()" class="btn-agregar-testimonio">
+                <i class="fas fa-comment-medical"></i> Deja tu Testimonio
+            </button>
+        </div>
+        {% else %}
+        <div style="text-align: center; margin-bottom: 40px;">
+            <p style="color: #666; font-size: 1.1em;">
+                <a href="/login" style="color: var(--primary-color); font-weight: 600; text-decoration: none;">Inicia sesión</a> 
+                para dejar tu testimonio
+            </p>
+        </div>
+        {% endif %}
+        
+        <!-- Grid de testimonios (cargados dinámicamente) -->
+        <div class="testimonios-grid" id="testimoniosGrid">
+            <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 3em; color: var(--primary-color);"></i>
+                <p style="margin-top: 20px; font-size: 1.1em; color: #666;">Cargando testimonios...</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MODAL PARA AGREGAR TESTIMONIO -->
+<div id="modalTestimonio" class="modal-testimonio">
+    <div class="modal-content-testimonio">
+        <span class="close-modal" onclick="cerrarModalTestimonio()">&times;</span>
+        <h2 style="text-align: center; margin-bottom: 30px; color: var(--dark-color);">
+            <i class="fas fa-star" style="color: var(--accent-color);"></i> Deja tu Testimonio
+        </h2>
+        
+        <form id="formTestimonio">
+            <div class="form-group-testimonio">
+                <label>Calificación</label>
+                <div class="estrellas-rating" id="estrellas-rating">
+                    <i class="fas fa-star" data-rating="1"></i>
+                    <i class="fas fa-star" data-rating="2"></i>
+                    <i class="fas fa-star" data-rating="3"></i>
+                    <i class="fas fa-star" data-rating="4"></i>
+                    <i class="fas fa-star" data-rating="5"></i>
+                </div>
+                <input type="hidden" id="rating-value" value="0">
+            </div>
+            
+            <div class="form-group-testimonio">
+                <label>Tu Comentario (máximo 500 caracteres)</label>
+                <textarea id="comentario-testimonio" rows="5" maxlength="500" placeholder="Cuéntanos tu experiencia..."></textarea>
+                <div style="text-align: right; color: #999; font-size: 0.9em; margin-top: 5px;">
+                    <span id="contador-caracteres">0</span>/500
+                </div>
+            </div>
+            
+            <div id="error-testimonio" style="display: none; background: #ffe6e6; color: #c00; padding: 12px; border-radius: 8px; margin-bottom: 15px;"></div>
+            
+            <button type="submit" class="btn-enviar-testimonio">
+                <i class="fas fa-paper-plane"></i> Enviar Testimonio
+            </button>
+        </form>
+    </div>
+</div>
+
+    <!-- IMPACTO -->
+    <section class="impacto-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nuestro Impacto en <span class="highlight">Números</span></h2>
+                <p>Cada número representa familias felices y celebraciones inolvidables</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div>
+<div class="stat-number" style="color: var(--primary-color);">
+    {{ stats.familias }}+
+</div>
+
+                    <div class="stat-label">Familias Conectadas</div>
+                </div>
+                <div>
+<div class="stat-number" style="color: var(--secondary-color);">
+    {{ stats.salones }}+
+</div>
+                    <div class="stat-label">Salones Verificados</div>
+                </div>
+                <div>
+<div class="stat-number" style="color: var(--primary-color);">{{ stats.tiempo_respuesta }}</div>
+                    <div class="stat-label">Tiempo de Respuesta</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-logo">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>KinderFiesta</span>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.8;">
+                        Conectamos familias en El Alto con los mejores salones infantiles para fiestas inolvidables y momentos mágicos.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 style="font-size: 1.3em; font-weight: 800; margin-bottom: 20px;">Enlaces Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/salones">Salones</a></li>
+                        <li><a href="/nosotros">Nosotros</a></li>
+                        <li><a href="/contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+<div>
+    <h3 style="font-size: 1.3em; font-weight: 800; margin-bottom: 20px;">Contacto</h3>
+    <ul class="footer-links">
+        <li style="display: flex; align-items: center; gap: 10px;">
+            <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+            <a href="https://wa.me/59167107296" target="_blank">+591 67107296</a>
+        </li>
+        <li style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-envelope" style="color: var(--primary-color);"></i>
+            <a href="mailto:kinderfiesta2025@gmail.com">kinderfiesta2025@gmail.com</a>
+        </li>
+    </ul>
+</div>
+            
+            <div class="footer-bottom">
+                <p style="color: rgba(255,255,255,0.5);">© 2025 KinderFiesta. Todos los derechos reservados. | Creando momentos mágicos 🎉</p>
+            </div>
+        </div>
+    </footer>
+
+ <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+    
+    
+    // Cargar salones destacados
+    async function cargarSalonesDestacados() {
+        try {
+            const response = await fetch('/api/salones');
+            const salones = await response.json();
+            const destacados = salones.slice(0, 3); // Primeros 3
+            
+            const container = document.getElementById('salonesDestacados');
+            
+            if (destacados.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+                        <i class="fas fa-search" style="font-size: 3em; color: #DDD;"></i>
+                        <p style="margin-top: 20px; color: #999;">No hay salones disponibles</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = destacados.map(salon => `
+                <div class="salon-card" onclick="window.location.href='/salones'">
+                    <div class="verified-badge">
+                        <i class="fas fa-check-circle"></i> Verificado
+                    </div>
+                    <img src="/static/imagenes/${salon.folder}/1.jpg" 
+                         alt="${salon.name}" 
+                         class="salon-image"
+                         onerror="this.src='https://via.placeholder.com/400x250/FF6B6B/FFFFFF?text=${encodeURIComponent(salon.name)}'">
+                    <div class="salon-content">
+                        <h3 class="salon-name">${salon.name}</h3>
+                        <div class="salon-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${salon.address}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error al cargar salones:', error);
+            document.getElementById('salonesDestacados').innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3em; color: var(--primary-color);"></i>
+                    <p style="margin-top: 20px; color: #666;">Error al cargar salones</p>
+                </div>
+            `;
+        }
+    }
+</script>
+
+<script>
+    // ============ TESTIMONIOS ============
+
+    let ratingSeleccionado = 0;
+
+    // Abrir modal
+    function abrirModalTestimonio() {
+        document.getElementById('modalTestimonio').style.display = 'block';
+        
+        // Limpiar bandera de sesión
+        fetch('/api/limpiar-modal-testimonio', {method: 'POST'})
+            .catch(err => console.log('No se pudo limpiar la bandera'));
+    }
+
+    // Cerrar modal
+    function cerrarModalTestimonio() {
+        document.getElementById('modalTestimonio').style.display = 'none';
+        document.getElementById('formTestimonio').reset();
+        document.getElementById('contador-caracteres').textContent = '0';
+        ratingSeleccionado = 0;
+        document.querySelectorAll('.estrellas-rating i').forEach(star => {
+            star.classList.remove('active');
+        });
+    }
+
+    // Sistema de estrellas
+    document.querySelectorAll('.estrellas-rating i').forEach(star => {
+        star.addEventListener('click', function() {
+            ratingSeleccionado = parseInt(this.getAttribute('data-rating'));
+            document.getElementById('rating-value').value = ratingSeleccionado;
+            
+            // Actualizar estrellas visuales
+            document.querySelectorAll('.estrellas-rating i').forEach((s, index) => {
+                if (index < ratingSeleccionado) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+        });
+    });
+
+    // Contador de caracteres
+    document.getElementById('comentario-testimonio').addEventListener('input', function() {
+        document.getElementById('contador-caracteres').textContent = this.value.length;
+    });
+
+    // Enviar testimonio
+    document.getElementById('formTestimonio').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const rating = parseInt(document.getElementById('rating-value').value);
+        const comentario = document.getElementById('comentario-testimonio').value.trim();
+        const errorDiv = document.getElementById('error-testimonio');
+        
+        // Validaciones
+        if (rating === 0) {
+            errorDiv.textContent = 'Por favor selecciona una calificación';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        if (!comentario) {
+            errorDiv.textContent = 'Por favor escribe un comentario';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        if (comentario.length > 500) {
+            errorDiv.textContent = 'El comentario no puede superar los 500 caracteres';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/agregar-testimonio', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    rating: rating,
+                    comentario: comentario
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('¡Gracias por tu testimonio! 🎉');
+                cerrarModalTestimonio();
+                cargarTestimonios(); // Recargar testimonios
+            } else {
+                errorDiv.textContent = data.message;
+                errorDiv.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            errorDiv.textContent = 'Error al enviar el testimonio';
+            errorDiv.style.display = 'block';
+        }
+    });
+
+    // Cargar testimonios
+    async function cargarTestimonios() {
+        try {
+            const response = await fetch('/api/testimonios');
+            const testimonios = await response.json();
+            
+            const container = document.getElementById('testimoniosGrid');
+            
+            if (testimonios.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+                        <i class="fas fa-comments" style="font-size: 3em; color: #DDD;"></i>
+                        <p style="margin-top: 20px; color: #999;">Sé el primero en dejar un testimonio</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = testimonios.map(t => {
+                const iniciales = t.nombre_usuario.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const estrellas = '<i class="fas fa-star"></i>'.repeat(t.rating);
+                
+                return `
+                    <div class="testimonio-card">
+                        <div class="testimonio-stars">${estrellas}</div>
+                        <p class="testimonio-texto">"${t.comentario}"</p>
+                        <div class="testimonio-autor">
+                            <div class="testimonio-avatar">${iniciales}</div>
+                            <div class="testimonio-info">
+                                <h4>${t.nombre_usuario}</h4>
+                                <p>Usuario verificado</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (error) {
+            console.error('Error al cargar testimonios:', error);
+            document.getElementById('testimoniosGrid').innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3em; color: var(--primary-color);"></i>
+                    <p style="margin-top: 20px; color: #666;">Error al cargar testimonios</p>
+                </div>
+            `;
+        }
+    }
+
+    // Cerrar modal al hacer clic fuera
+    window.onclick = function(event) {
+        const modal = document.getElementById('modalTestimonio');
+        if (event.target === modal) {
+            cerrarModalTestimonio();
+        }
+    }
+    
+    // ============ INICIALIZAR TODO ============
+    
+    window.addEventListener('DOMContentLoaded', function() {
+        // Cargar salones y testimonios
+        cargarSalonesDestacados();
+        cargarTestimonios();
+        
+        // Abrir modal automáticamente después de registro
+        {% if session.get('mostrar_modal_testimonio') %}
+            setTimeout(function() {
+                abrirModalTestimonio();
+            }, 500);
+        {% endif %}
+    });
+</script>
+</body>
+</html>

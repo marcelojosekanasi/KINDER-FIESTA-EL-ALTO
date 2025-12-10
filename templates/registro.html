@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - KinderFiesta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-color: #FF6B6B;
+            --primary-dark: #EE5A52;
+            --secondary-color: #4ECDC4;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .registro-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
+            padding: 50px 40px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo i {
+            font-size: 3em;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        .logo h1 {
+            font-size: 2em;
+            font-weight: 900;
+            color: var(--dark-color);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+        .btn-registro {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-registro:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+        .error {
+            background: #ffe6e6;
+            color: #c00;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+        }
+        .login-link a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .back-home {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .back-home a {
+            color: #999;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="registro-container">
+        <div class="logo">
+            <i class="fas fa-birthday-cake"></i>
+            <h1>KinderFiesta</h1>
+        </div>
+        
+        <h2 style="text-align: center; margin-bottom: 30px; color: var(--dark-color);">Crear Cuenta</h2>
+        
+        {% if error %}
+        <div class="error">
+            <i class="fas fa-exclamation-circle"></i> {{ error }}
+        </div>
+        {% endif %}
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="nombre">Nombre Completo</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="tu@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña (mínimo 6 caracteres)</label>
+                <input type="password" id="password" name="password" required placeholder="Tu contraseña">
+            </div>
+            
+            <div class="form-group">
+                <label for="password2">Confirmar Contraseña</label>
+                <input type="password" id="password2" name="password2" required placeholder="Confirma tu contraseña">
+            </div>
+            
+            <button type="submit" class="btn-registro">Registrarse</button>
+        </form>
+        
+        <div class="login-link">
+            ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
+        </div>
+        
+        <div class="back-home">
+            <a href="/"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
+        </div>
+    </div>
+</body>
+</html>

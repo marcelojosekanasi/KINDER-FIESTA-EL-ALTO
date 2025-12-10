@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salones Infantiles - KinderFiesta</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-color: #FF6B6B;
+            --primary-dark: #EE5A52;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFD93D;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+            --text-color: #333;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        body { font-family: 'Poppins', sans-serif; color: var(--text-color); line-height: 1.6; overflow-x: hidden; background: var(--light-color); }
+        
+        /* NAVBAR */
+        .navbar { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: fixed; width: 100%; top: 0; z-index: 1000; transition: var(--transition); }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.8em; font-weight: 900; color: var(--primary-color); text-decoration: none; }
+        .logo i { font-size: 1.3em; }
+        .nav-links { display: flex; list-style: none; gap: 40px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--dark-color); font-weight: 600; font-size: 1em; transition: var(--transition); }
+        .nav-links a:hover { color: var(--primary-color); }
+        .btn-registrar { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; padding: 12px 30px; border-radius: 25px; font-weight: 700; border: none; cursor: pointer; transition: var(--transition); text-decoration: none; }
+        .btn-registrar:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4); }
+        
+        /* HERO */
+        .hero-salones { background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); padding: 140px 20px 80px; text-align: center; color: white; }
+        .hero-salones h1 { font-size: 3.5em; font-weight: 900; margin-bottom: 20px; }
+        .hero-salones p { font-size: 1.3em; opacity: 0.95; }
+        
+        /* CONTAINER */
+        .container { max-width: 1400px; margin: 0 auto; padding: 60px 20px; }
+        
+        /* FILTROS */
+        .filtros-section { background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 5px 20px rgba(0,0,0,0.08); margin-bottom: 40px; }
+        .filtros-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .filtro-item { display: flex; flex-direction: column; }
+        .filtro-item label { font-weight: 600; margin-bottom: 8px; color: var(--dark-color); }
+        .filtro-item input, .filtro-item select { padding: 12px 18px; border: 2px solid #E8E8E8; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 1em; transition: var(--transition); }
+        .filtro-item input:focus, .filtro-item select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1); }
+        .btn-filtrar { padding: 12px 30px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 1em; cursor: pointer; transition: var(--transition); }
+        .btn-filtrar:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        
+        /* SALONES GRID */
+        .salones-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 30px; }
+        .salon-card { background: white; border-radius: var(--border-radius); overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: var(--transition); cursor: pointer; position: relative; }
+        .salon-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+        
+        /* CARRUSEL DE IMÁGENES */
+        .salon-carousel { position: relative; width: 100%; height: 280px; overflow: hidden; }
+        .salon-carousel img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.5s ease; }
+        .salon-carousel img.active { opacity: 1; z-index: 1; }
+        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 10; transition: var(--transition); display: flex; align-items: center; justify-content: center; font-size: 1.2em; color: var(--dark-color); }
+        .carousel-btn:hover { background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .carousel-btn.prev { left: 15px; }
+        .carousel-btn.next { right: 15px; }
+        .carousel-indicators { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
+        .carousel-indicator { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: var(--transition); }
+        .carousel-indicator.active { background: white; width: 24px; border-radius: 4px; }
+        
+        .verified-badge { position: absolute; top: 15px; left: 15px; background: var(--secondary-color); color: white; padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 0.85em; display: flex; align-items: center; gap: 5px; z-index: 10; }
+        
+        .salon-content { padding: 25px; }
+        .salon-category { color: var(--primary-color); font-size: 0.85em; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .salon-name { font-size: 1.6em; font-weight: 800; color: var(--dark-color); margin-bottom: 12px; }
+        .salon-location { color: #666; font-size: 0.95em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .salon-rating { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .stars { color: var(--accent-color); font-size: 1.2em; }
+        .rating-number { font-weight: 700; font-size: 1.1em; color: var(--dark-color); }
+        .rating-count { color: #999; font-size: 0.9em; }
+        .salon-phone { color: var(--primary-color); font-size: 1.1em; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
+        
+        /* BOTONES DE ACCIÓN */
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-action { display: block; width: 100%; padding: 15px; text-align: center; border-radius: 10px; font-weight: 700; text-decoration: none; transition: var(--transition); border: none; cursor: pointer; font-size: 1em; }
+        .btn-ver-detalles { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; }
+        .btn-ver-detalles:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4); }
+        .btn-ver-ubicacion { background: linear-gradient(135deg, var(--secondary-color) 0%, #3DB8AF 100%); color: white; }
+        .btn-ver-ubicacion:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4); }
+        
+        /* MODAL DETALLES */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; overflow-y: auto; }
+        .modal-content { background: white; max-width: 1200px; margin: 80px auto 40px; border-radius: 20px; position: relative; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-close { position: absolute; right: 20px; top: 20px; font-size: 2em; color: #999; cursor: pointer; z-index: 10; transition: var(--transition); background: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .modal-close:hover { color: var(--primary-color); transform: rotate(90deg); }
+        
+        .modal-header { position: relative; }
+        .modal-carousel { width: 100%; height: 500px; position: relative; overflow: hidden; border-radius: 20px 20px 0 0; }
+        .modal-carousel img { width: 100%; height: 100%; object-fit: cover; position: absolute; opacity: 0; transition: opacity 0.5s ease; }
+        .modal-carousel img.active { opacity: 1; }
+        
+        .modal-body { padding: 40px; }
+        .modal-salon-name { font-size: 2.5em; font-weight: 900; color: var(--dark-color); margin-bottom: 15px; }
+        .modal-salon-category { color: var(--primary-color); font-size: 1em; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; }
+        
+        /* TABS/BOTONES DE NAVEGACIÓN */
+        .tabs-navigation { display: flex; gap: 15px; border-bottom: 2px solid #F0F0F0; margin-bottom: 30px; }
+        .tab-btn { padding: 15px 30px; background: none; border: none; font-size: 1.1em; font-weight: 700; color: #999; cursor: pointer; transition: var(--transition); position: relative; }
+        .tab-btn:hover { color: var(--primary-color); }
+        .tab-btn.active { color: var(--primary-color); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 3px; background: var(--primary-color); }
+        
+        /* CONTENIDO DE TABS */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* TAB DETALLES */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        .info-item { display: flex; align-items: flex-start; gap: 15px; }
+        .info-icon { font-size: 1.8em; color: var(--primary-color); }
+        .info-text h4 { font-weight: 700; color: var(--dark-color); margin-bottom: 5px; }
+        .info-text p { color: #666; line-height: 1.8; }
+        
+        .descripcion-section { margin-bottom: 30px; }
+        .descripcion-section h3 { font-size: 1.5em; font-weight: 800; color: var(--dark-color); margin-bottom: 15px; }
+        .descripcion-section p { color: #666; line-height: 1.8; font-size: 1.05em; }
+        
+        .horarios-section { background: var(--light-color); padding: 25px; border-radius: 15px; margin-bottom: 30px; }
+        .horarios-section h3 { font-size: 1.5em; font-weight: 800; color: var(--dark-color); margin-bottom: 20px; }
+        .horario-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #E8E8E8; }
+        .horario-item:last-child { border-bottom: none; }
+        .horario-dia { font-weight: 700; color: var(--dark-color); }
+        .horario-hora { color: #666; }
+        
+        .redes-sociales { display: flex; gap: 15px; margin-top: 20px; }
+        .red-social { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5em; color: white; transition: var(--transition); text-decoration: none; }
+        .red-social:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .red-social.facebook { background: #1877F2; }
+        .red-social.whatsapp { background: #25D366; }
+        .red-social.instagram { background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF); }
+        
+        /* TAB COMENTARIOS */
+        .comentarios-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .comentarios-header h3 { font-size: 2em; font-weight: 800; color: var(--dark-color); }
+        .btn-agregar-comentario { padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: var(--transition); }
+        .btn-agregar-comentario:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        
+        .comentarios-list { display: grid; gap: 25px; }
+        .comentario-card { background: var(--light-color); padding: 25px; border-radius: 15px; }
+        .comentario-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .comentario-avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.2em; }
+        .comentario-info h4 { font-weight: 700; color: var(--dark-color); }
+        .comentario-fecha { font-size: 0.85em; color: #999; }
+        .comentario-texto { color: #666; line-height: 1.8; margin-top: 10px; }
+        
+        /* FORMULARIO COMENTARIO */
+        .form-comentario { background: var(--light-color); padding: 30px; border-radius: 15px; margin-top: 30px; display: none; }
+        .form-comentario.active { display: block; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; color: var(--dark-color); margin-bottom: 8px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 15px; border: 2px solid #E8E8E8; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 1em; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1); }
+        .estrellas-input { display: flex; gap: 10px; font-size: 2em; }
+        .estrellas-input i { color: #DDD; cursor: pointer; transition: var(--transition); }
+        .estrellas-input i:hover, .estrellas-input i.active { color: var(--accent-color); }
+        .btn-enviar-comentario { width: 100%; padding: 15px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 1.1em; cursor: pointer; transition: var(--transition); }
+        .btn-enviar-comentario:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        
+        /* MODAL UBICACIÓN */
+        .modal-ubicacion { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; overflow-y: auto; }
+        .modal-ubicacion-content { background: white; max-width: 900px; margin: 80px auto; border-radius: 20px; position: relative; animation: slideDown 0.3s ease; padding: 40px; }
+        .map-container { width: 100%; height: 500px; border-radius: 15px; overflow: hidden; margin-top: 20px; }
+        .map-container iframe { width: 100%; height: 100%; border: none; }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero-salones h1 { font-size: 2.5em; }
+            .salones-grid { grid-template-columns: 1fr; }
+            .info-grid { grid-template-columns: 1fr; }
+            .modal-carousel { height: 300px; }
+            .tabs-navigation { flex-wrap: wrap; }
+            .action-buttons { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">
+            <i class="fas fa-birthday-cake"></i>
+            <span>KinderFiesta</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/salones" style="color: var(--primary-color);">Salones</a></li>
+            <li><a href="/nosotros">Nosotros</a></li>
+            <li><a href="/contacto">Contacto</a></li>
+            
+            {% if session.get('user_logged_in') %}
+                <li style="color: var(--dark-color); font-weight: 600;">
+                    <i class="fas fa-user-circle" style="color: var(--secondary-color);"></i>
+                    {{ session.get('user_nombre') }}
+                </li>
+                <li><a href="/logout" style="color: #999;">Cerrar Sesión</a></li>
+            {% else %}
+                <li><a href="/login" class="btn-login-nav">Iniciar Sesión</a></li>
+            {% endif %}
+            
+            <li><a href="/registrar-local" class="btn-registrar">Registrar Local</a></li>
+        </ul>
+    </div>
+</nav>
+
+<section class="hero-salones">
+    <h1>🏰 <span id="totalSalones">5</span> Salones Disponibles</h1>
+    <p>Encuentra el espacio perfecto para tu celebración en El Alto, Bolivia</p>
+</section>
+
+<div class="container">
+    <!-- FILTROS -->
+<!-- FILTROS -->
+<div class="filtros-section">
+    <div class="filtros-grid">
+        <div class="filtro-item">
+            <label><i class="fas fa-search"></i> Buscar por nombre</label>
+            <input type="text" id="searchInput" placeholder="Ej: Salón SAKURA">
+        </div>
+        <div class="filtro-item">
+            <label><i class="fas fa-map-marker-alt"></i> Zona</label>
+            <select id="zonaFilter">
+                <option value="">Todas las zonas</option>
+                <option value="Ciudad Satélite">Ciudad Satélite</option>
+                <option value="Villa Adela">Villa Adela</option>
+                <option value="16 de Julio">16 de Julio</option>
+                <option value="Senkata">Senkata</option>
+            </select>
+        </div>
+        <div class="filtro-item">
+            <label><i class="fas fa-star"></i> Calificación mínima</label>
+            <select id="ratingFilter">
+                <option value="0">Todas</option>
+                <option value="4">4★ o más</option>
+                <option value="4.5">4.5★ o más</option>
+                <option value="5">5★</option>
+            </select>
+        </div>
+        <div class="filtro-item" style="display: flex; align-items: flex-end;">
+            <button class="btn-filtrar" onclick="aplicarFiltros()">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
+        </div>
+    </div>
+</div>
+
+    
+    <!-- GRID DE SALONES -->
+    <div class="salones-grid" id="salonesContainer">
+        <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 3em; color: var(--primary-color);"></i>
+            <p style="margin-top: 20px; font-size: 1.1em; color: #666;">Cargando salones...</p>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DETALLES DEL SALÓN -->
+<div id="modalDetalles" class="modal-overlay">
+    <div class="modal-content">
+        <span class="modal-close" onclick="cerrarModal()">&times;</span>
+        
+        <div class="modal-header">
+            <div class="modal-carousel" id="modalCarousel">
+                <!-- Imágenes cargadas dinámicamente -->
+            </div>
+            <button class="carousel-btn prev" onclick="cambiarImagenModal(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-btn next" onclick="cambiarImagenModal(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="carousel-indicators" id="modalIndicators"></div>
+        </div>
+        
+        <div class="modal-body">
+            <h2 class="modal-salon-name" id="modalNombre">Nombre del Salón</h2>
+            <p class="modal-salon-category" id="modalCategoria">CATEGORÍA</p>
+            
+            <div class="salon-rating" style="font-size: 1.3em; margin-bottom: 30px;">
+                <div class="stars" id="modalStars">⭐⭐⭐⭐⭐</div>
+                <span class="rating-number" id="modalRating">5.0</span>
+                <span class="rating-count" id="modalReviewCount">(0 reseñas)</span>
+            </div>
+            
+            <!-- TABS DE NAVEGACIÓN (SOLO 2 TABS) -->
+            <div class="tabs-navigation">
+                <button class="tab-btn active" onclick="cambiarTab(event, 'detalles')">
+                    <i class="fas fa-info-circle"></i> Detalles
+                </button>
+                <button class="tab-btn" onclick="cambiarTab(event, 'comentarios')">
+                    <i class="fas fa-comments"></i> Comentarios
+                </button>
+            </div>
+            
+            <!-- TAB DETALLES -->
+            <div id="tab-detalles" class="tab-content active">
+                <div class="descripcion-section">
+                    <h3><i class="fas fa-file-alt"></i> Descripción</h3>
+                    <p id="modalDescripcion">
+                        Un espacio mágico diseñado especialmente para celebraciones infantiles inolvidables. 
+                        Contamos con instalaciones modernas, áreas de juego seguras, y un equipo profesional 
+                        dedicado a hacer de cada evento una experiencia única y especial para los más pequeños.
+                    </p>
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="info-text">
+                            <h4>Dirección</h4>
+                            <p id="modalDireccion">-</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-phone"></i></div>
+                        <div class="info-text">
+                            <h4>Teléfono</h4>
+                            <p id="modalTelefono">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="horarios-section">
+                    <h3><i class="fas fa-clock"></i> Horarios de Atención</h3>
+                    <div id="horariosLista">
+                        <div class="horario-item">
+                            <span class="horario-dia">Lunes a Viernes</span>
+                            <span class="horario-hora">9:00 AM - 8:00 PM</span>
+                        </div>
+                        <div class="horario-item">
+                            <span class="horario-dia">Sábados</span>
+                            <span class="horario-hora">9:00 AM - 9:00 PM</span>
+                        </div>
+                        <div class="horario-item">
+                            <span class="horario-dia">Domingos</span>
+                            <span class="horario-hora">10:00 AM - 7:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+                
+<div class="descripcion-section">
+    <h3><i class="fas fa-address-book"></i> Contacto</h3>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <!-- WhatsApp -->
+        <div id="whatsappContainer" style="display: none;">
+            <a href="#" id="whatsappBtn" target="_blank" style="display: inline-flex; align-items: center; gap: 10px; padding: 15px 25px; background: #25D366; color: white; border-radius: 10px; text-decoration: none; font-weight: 700; transition: all 0.3s ease;">
+                <i class="fab fa-whatsapp" style="font-size: 1.5em;"></i>
+                <span id="whatsappText">WhatsApp</span>
+            </a>
+        </div>
+        
+        <!-- Teléfono -->
+        <a href="#" id="telefonoBtn" style="display: inline-flex; align-items: center; gap: 10px; padding: 15px 25px; background: var(--primary-color); color: white; border-radius: 10px; text-decoration: none; font-weight: 700; transition: all 0.3s ease;">
+            <i class="fas fa-phone-alt" style="font-size: 1.3em;"></i>
+            <span id="telefonoText">Teléfono</span>
+        </a>
+    </div>
+</div>
+
+</div>
+            </div>
+            
+            <!-- TAB COMENTARIOS -->
+            <div id="tab-comentarios" class="tab-content">
+                <div class="comentarios-header">
+                    <h3><i class="fas fa-comments"></i> Comentarios</h3>
+                    <button class="btn-agregar-comentario" onclick="toggleFormComentario()">
+                        <i class="fas fa-plus"></i> Agregar Comentario
+                    </button>
+                </div>
+                
+                <!-- FORMULARIO NUEVO COMENTARIO -->
+                <div class="form-comentario" id="formComentario">
+                    <form id="comentarioForm">
+                        <div class="form-group">
+                            <label>Tu Nombre</label>
+                            <input type="text" id="comentarioNombre" placeholder="Ej: María López" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Calificación</label>
+                            <div class="estrellas-input" id="estrellas-input">
+                                <i class="fas fa-star" data-rating="1"></i>
+                                <i class="fas fa-star" data-rating="2"></i>
+                                <i class="fas fa-star" data-rating="3"></i>
+                                <i class="fas fa-star" data-rating="4"></i>
+                                <i class="fas fa-star" data-rating="5"></i>
+                            </div>
+                            <input type="hidden" id="comentarioRating" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Tu Comentario (máximo 500 caracteres)</label>
+                            <textarea id="comentarioTexto" rows="5" maxlength="500" placeholder="Cuéntanos tu experiencia..." required></textarea>
+                            <div style="text-align: right; color: #999; font-size: 0.9em; margin-top: 5px;">
+                                <span id="contador">0</span>/500
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-enviar-comentario">
+                            <i class="fas fa-paper-plane"></i> Enviar Comentario
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- LISTA DE COMENTARIOS -->
+                <div class="comentarios-list" id="comentariosList">
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <i class="fas fa-comments" style="font-size: 3em; margin-bottom: 15px;"></i>
+                        <p>No hay comentarios todavía. ¡Sé el primero en comentar!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL UBICACIÓN (SEPARADO) -->
+<div id="modalUbicacion" class="modal-ubicacion">
+    <div class="modal-ubicacion-content">
+        <span class="modal-close" onclick="cerrarModalUbicacion()">&times;</span>
+        <h2 style="font-size: 2.5em; font-weight: 900; color: var(--dark-color); margin-bottom: 15px;" id="modalUbicacionNombre">
+            Ubicación del Salón
+        </h2>
+        <p style="color: #666; font-size: 1.1em; margin-bottom: 20px;">
+            <i class="fas fa-map-marker-alt" style="color: var(--primary-color);"></i>
+            <span id="modalUbicacionDireccion">Dirección</span>
+        </p>
+        <div class="map-container">
+            <iframe id="googleMapUbicacion" src="" allowfullscreen loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    let salones = [];
+    let salonActual = null;
+    let imagenesActuales = [];
+    let imagenActualIndex = 0;
+    let modalImagenIndex = 0;
+    let ratingSeleccionado = 0;
+    
+    // Cargar salones desde la API
+    async function cargarSalones() {
+        try {
+            const response = await fetch('/api/salones');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // ✅ AGREGAR VALORES POR DEFECTO PARA EVITAR NULL
+            salones = data.map(salon => ({
+                ...salon,
+                whatsapp: salon.whatsapp || null,
+                google_maps: salon.google_maps || null,
+                phone: salon.phone || 'No disponible',
+                address: salon.address || 'Sin dirección',
+                category: salon.category || 'Salón Infantil',
+                rating: salon.rating || 0,
+                fotos: salon.fotos || '1.jpg,2.jpg,3.jpg'
+            }));
+            
+            console.log('✅ Salones cargados:', salones.length);
+            
+            document.getElementById('totalSalones').textContent = salones.length;
+            mostrarSalones(salones);
+            
+        } catch (error) {
+            console.error('❌ Error al cargar salones:', error);
+            
+            document.getElementById('salonesContainer').innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1; color: #FF6B6B;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3em;"></i>
+                    <p style="margin-top: 20px;"><strong>Error al cargar los salones</strong></p>
+                    <p style="color: #666; font-size: 0.9em; margin-top: 10px;">${error.message}</p>
+                    <button onclick="location.reload()" style="margin-top: 20px; padding: 12px 30px; background: var(--primary-color); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 700;">
+                        <i class="fas fa-sync-alt"></i> Recargar Página
+                    </button>
+                </div>
+            `;
+        }
+    }
+    
+    // Mostrar salones en el grid
+    function mostrarSalones(salonesAMostrar) {
+        const container = document.getElementById('salonesContainer');
+        
+        if (salonesAMostrar.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+                    <i class="fas fa-search" style="font-size: 3em; color: #DDD;"></i>
+                    <p style="margin-top: 20px; color: #999;">No se encontraron salones</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = salonesAMostrar.map(salon => {
+            let fotosArray = [];
+            if (salon.fotos && typeof salon.fotos === 'string') {
+                fotosArray = salon.fotos.split(',').map(f => f.trim());
+            }
+            
+            while (fotosArray.length < 5 && fotosArray.length > 0) {
+                fotosArray.push(...fotosArray.slice(0, 5 - fotosArray.length));
+            }
+            
+            const fotos = fotosArray.slice(0, 5);
+            const ratingValue = salon.rating ? parseFloat(salon.rating) : 0;
+            const estrellas = generarEstrellas(ratingValue);
+            const totalReviews = salon.reviews ? salon.reviews.length : 0;
+            
+            return `
+                <div class="salon-card">
+                    <div class="verified-badge">
+                        <i class="fas fa-check-circle"></i> Verificado
+                    </div>
+                    <div class="salon-carousel" id="carousel-${salon.id}">
+                        ${fotos.map((foto, index) => `
+                            <img src="/static/imagenes/${salon.folder}/${foto}" 
+                                 alt="${salon.name}" 
+                                 class="${index === 0 ? 'active' : ''}"
+                                 onerror="this.src='https://via.placeholder.com/400x280/FF6B6B/FFFFFF?text=${encodeURIComponent(salon.name)}'">
+                        `).join('')}
+                        <button class="carousel-btn prev" onclick="event.stopPropagation(); cambiarImagen(${salon.id}, -1)">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="carousel-btn next" onclick="event.stopPropagation(); cambiarImagen(${salon.id}, 1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <div class="carousel-indicators">
+                            ${fotos.map((_, index) => `
+                                <div class="carousel-indicator ${index === 0 ? 'active' : ''}" 
+                                     onclick="event.stopPropagation(); irAImagen(${salon.id}, ${index})"></div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="salon-content">
+                        <p class="salon-category">${salon.category}</p>
+                        <h3 class="salon-name">${salon.name}</h3>
+                        <div class="salon-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${salon.address}
+                        </div>
+                        <div class="salon-rating">
+                            <div class="stars">${estrellas}</div>
+                            <span class="rating-number">${ratingValue.toFixed(1)}</span>
+                            <span class="rating-count">(${totalReviews} reseñas)</span>
+                        </div>
+                        <div class="salon-phone">
+                            <i class="fas fa-phone"></i>
+                            ${salon.phone}
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-ver-detalles" onclick="abrirDetalles(${salon.id})">
+                                <i class="fas fa-info-circle"></i> Ver Detalles
+                            </button>
+                            <button class="btn-action btn-ver-ubicacion" onclick="abrirUbicacion(${salon.id})">
+                                <i class="fas fa-map-marker-alt"></i> Ver Ubicación
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Generar estrellas HTML
+    function generarEstrellas(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        let html = '';
+        
+        for (let i = 0; i < fullStars; i++) {
+            html += '<i class="fas fa-star"></i>';
+        }
+        if (hasHalfStar) {
+            html += '<i class="fas fa-star-half-alt"></i>';
+        }
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        for (let i = 0; i < emptyStars; i++) {
+            html += '<i class="far fa-star"></i>';
+        }
+        
+        return html;
+    }
+    
+    // Cambiar imagen del carrusel
+    function cambiarImagen(salonId, direccion) {
+        const carousel = document.getElementById(`carousel-${salonId}`);
+        const imagenes = carousel.querySelectorAll('img');
+        const indicators = carousel.querySelectorAll('.carousel-indicator');
+        
+        let actualIndex = Array.from(imagenes).findIndex(img => img.classList.contains('active'));
+        imagenes[actualIndex].classList.remove('active');
+        indicators[actualIndex].classList.remove('active');
+        
+        actualIndex = (actualIndex + direccion + imagenes.length) % imagenes.length;
+        
+        imagenes[actualIndex].classList.add('active');
+        indicators[actualIndex].classList.add('active');
+    }
+    
+    // Ir a imagen específica
+    function irAImagen(salonId, index) {
+        const carousel = document.getElementById(`carousel-${salonId}`);
+        const imagenes = carousel.querySelectorAll('img');
+        const indicators = carousel.querySelectorAll('.carousel-indicator');
+        
+        imagenes.forEach(img => img.classList.remove('active'));
+        indicators.forEach(ind => ind.classList.remove('active'));
+        
+        imagenes[index].classList.add('active');
+        indicators[index].classList.add('active');
+    }
+    
+    // ✅ ABRIR MODAL DE DETALLES - CORREGIDO
+    function abrirDetalles(salonId) {
+        salonActual = salones.find(s => s.id === salonId);
+        if (!salonActual) return;
+        
+        const ratingValue = salonActual.rating ? parseFloat(salonActual.rating) : 0;
+        
+        // Cargar información básica
+        document.getElementById('modalNombre').textContent = salonActual.name;
+        document.getElementById('modalCategoria').textContent = salonActual.category;
+        document.getElementById('modalDireccion').textContent = salonActual.address;
+        document.getElementById('modalTelefono').textContent = salonActual.phone;
+        document.getElementById('modalStars').innerHTML = generarEstrellas(ratingValue);
+        document.getElementById('modalRating').textContent = ratingValue.toFixed(1);
+        document.getElementById('modalReviewCount').textContent = `(${salonActual.reviews ? salonActual.reviews.length : 0} reseñas)`;
+        
+        // Cargar carrusel de imágenes
+        let fotosArray = [];
+        if (salonActual.fotos && typeof salonActual.fotos === 'string') {
+            fotosArray = salonActual.fotos.split(',').map(f => f.trim());
+        }
+        
+        while (fotosArray.length < 5 && fotosArray.length > 0) {
+            fotosArray.push(...fotosArray.slice(0, 5 - fotosArray.length));
+        }
+        
+        imagenesActuales = fotosArray.slice(0, 5);
+        modalImagenIndex = 0;
+        cargarCarruselModal();
+        
+        // ✅ CONFIGURAR WHATSAPP Y TELÉFONO
+        const whatsappContainer = document.getElementById('whatsappContainer');
+        const whatsappBtn = document.getElementById('whatsappBtn');
+        const whatsappText = document.getElementById('whatsappText');
+        
+        if (salonActual.whatsapp && salonActual.whatsapp !== 'null' && salonActual.whatsapp !== '') {
+            whatsappContainer.style.display = 'block';
+            whatsappBtn.href = `https://wa.me/591${salonActual.whatsapp}`;
+            whatsappText.textContent = salonActual.whatsapp;
+        } else {
+            whatsappContainer.style.display = 'none';
+        }
+        
+        const telefonoBtn = document.getElementById('telefonoBtn');
+        const telefonoText = document.getElementById('telefonoText');
+        
+        if (salonActual.phone && salonActual.phone !== 'null' && salonActual.phone !== '' && salonActual.phone !== 'No disponible') {
+            telefonoBtn.href = `tel:+591${salonActual.phone}`;
+            telefonoBtn.style.background = 'var(--primary-color)';
+            telefonoBtn.style.cursor = 'pointer';
+            telefonoText.textContent = salonActual.phone;
+        } else {
+            telefonoBtn.href = '#';
+            telefonoBtn.style.background = '#999';
+            telefonoBtn.style.cursor = 'not-allowed';
+            telefonoBtn.onclick = function(e) { e.preventDefault(); };
+            telefonoText.innerHTML = '<i class="fas fa-phone-slash"></i> No disponible';
+        }
+        
+        // Cargar comentarios
+        cargarComentarios();
+        
+        // Resetear tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tab-detalles').classList.add('active');
+        
+        // Mostrar modal
+        document.getElementById('modalDetalles').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // ✅ ABRIR GOOGLE MAPS REAL
+// ✅ ABRIR GOOGLE MAPS REAL - VERSIÓN FINAL
+// ✅ ABRIR GOOGLE MAPS REAL - VERSIÓN FINAL
+function abrirUbicacion(salonId) {
+    const salon = salones.find(s => s.id === salonId);
+    if (!salon) {
+        console.error('❌ Salón no encontrado');
+        return;
+    }
+    
+    console.log('🗺️ Abriendo ubicación para:', salon.name);
+    console.log('🔗 Google Maps URL:', salon.google_maps);
+    
+    // Verificar si tiene google_maps válido
+    if (salon.google_maps && 
+        salon.google_maps !== 'null' && 
+        salon.google_maps !== '' && 
+        salon.google_maps.startsWith('http')) {
+        
+        console.log('✅ Abriendo enlace directo de Google Maps');
+        window.open(salon.google_maps, '_blank');
+    } else {
+        console.log('⚠️ No hay enlace de Google Maps, buscando por dirección');
+        const searchQuery = encodeURIComponent(`${salon.name}, ${salon.address}, El Alto, Bolivia`);
+        const searchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+        window.open(searchUrl, '_blank');
+    }
+}
+
+    
+    // Cargar carrusel del modal
+    function cargarCarruselModal() {
+        const modalCarousel = document.getElementById('modalCarousel');
+        const modalIndicators = document.getElementById('modalIndicators');
+        
+        modalCarousel.innerHTML = imagenesActuales.map((foto, index) => `
+            <img src="/static/imagenes/${salonActual.folder}/${foto}" 
+                 alt="${salonActual.name}" 
+                 class="${index === 0 ? 'active' : ''}"
+                 onerror="this.src='https://via.placeholder.com/800x500/FF6B6B/FFFFFF?text=${encodeURIComponent(salonActual.name)}'">
+        `).join('');
+        
+        modalIndicators.innerHTML = imagenesActuales.map((_, index) => `
+            <div class="carousel-indicator ${index === 0 ? 'active' : ''}" onclick="irAImagenModal(${index})"></div>
+        `).join('');
+    }
+    
+    // Cambiar imagen modal
+    function cambiarImagenModal(direccion) {
+        const imagenes = document.querySelectorAll('#modalCarousel img');
+        const indicators = document.querySelectorAll('#modalIndicators .carousel-indicator');
+        
+        imagenes[modalImagenIndex].classList.remove('active');
+        indicators[modalImagenIndex].classList.remove('active');
+        
+        modalImagenIndex = (modalImagenIndex + direccion + imagenesActuales.length) % imagenesActuales.length;
+        
+        imagenes[modalImagenIndex].classList.add('active');
+        indicators[modalImagenIndex].classList.add('active');
+    }
+    
+    // Ir a imagen específica del modal
+    function irAImagenModal(index) {
+        const imagenes = document.querySelectorAll('#modalCarousel img');
+        const indicators = document.querySelectorAll('#modalIndicators .carousel-indicator');
+        
+        imagenes[modalImagenIndex].classList.remove('active');
+        indicators[modalImagenIndex].classList.remove('active');
+        
+        modalImagenIndex = index;
+        
+        imagenes[modalImagenIndex].classList.add('active');
+        indicators[modalImagenIndex].classList.add('active');
+    }
+    
+    // Cerrar modal
+    function cerrarModal() {
+        document.getElementById('modalDetalles').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Cambiar tabs
+    function cambiarTab(event, tabName) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        event.currentTarget.classList.add('active');
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+    
+    // Cargar comentarios
+    function cargarComentarios() {
+        const comentariosList = document.getElementById('comentariosList');
+        const reviews = salonActual.reviews || [];
+        
+        if (reviews.length === 0) {
+            comentariosList.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <i class="fas fa-comments" style="font-size: 3em; margin-bottom: 15px;"></i>
+                    <p>No hay comentarios todavía. ¡Sé el primero en comentar!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        comentariosList.innerHTML = reviews.map(review => {
+            const inicial = review.nombre ? review.nombre.charAt(0).toUpperCase() : 'U';
+            const estrellas = generarEstrellas(review.rating || 0);
+            
+            return `
+                <div class="comentario-card">
+                    <div class="comentario-header">
+                        <div class="comentario-avatar">${inicial}</div>
+                        <div class="comentario-info">
+                            <h4>${review.nombre || 'Usuario'}</h4>
+                            <div class="stars" style="font-size: 0.9em; color: var(--accent-color);">${estrellas}</div>
+                            <p class="comentario-fecha">${new Date(review.fecha).toLocaleDateString('es-BO')}</p>
+                        </div>
+                    </div>
+                    <p class="comentario-texto">${review.comentario}</p>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Toggle formulario comentario
+    function toggleFormComentario() {
+        const form = document.getElementById('formComentario');
+        form.classList.toggle('active');
+    }
+    
+// Aplicar filtros
+function aplicarFiltros() {
+    const busqueda = document.getElementById('searchInput').value.toLowerCase();
+    const zona = document.getElementById('zonaFilter').value;
+    const ratingMinimo = parseFloat(document.getElementById('ratingFilter').value);
+    
+    console.log('Filtros aplicados:', { busqueda, zona, ratingMinimo });
+    
+    const filtrados = salones.filter(salon => {
+        // Búsqueda por nombre
+        const matchBusqueda = !busqueda || 
+            (salon.name && salon.name.toLowerCase().includes(busqueda));
+        
+        // Filtro por zona (locationCode en BD)
+        const matchZona = !zona || 
+            (salon.locationCode && salon.locationCode === zona) ||
+            (salon.address && salon.address.toLowerCase().includes(zona.toLowerCase()));
+        
+        // Filtro por rating
+        const salonRating = salon.rating ? parseFloat(salon.rating) : 0;
+        const matchRating = !ratingMinimo || salonRating >= ratingMinimo;
+        
+        return matchBusqueda && matchZona && matchRating;
+    });
+    
+    console.log(`Resultados: ${filtrados.length} de ${salones.length} salones`);
+    
+    document.getElementById('totalSalones').textContent = filtrados.length;
+    mostrarSalones(filtrados);
+}
+
+    
+    // Inicializar estrellas
+    document.querySelectorAll('#estrellas-input i').forEach((estrella, index) => {
+        estrella.addEventListener('click', function() {
+            ratingSeleccionado = index + 1;
+            document.getElementById('comentarioRating').value = ratingSeleccionado;
+            
+            document.querySelectorAll('#estrellas-input i').forEach((e, i) => {
+                if (i < ratingSeleccionado) {
+                    e.classList.add('active');
+                } else {
+                    e.classList.remove('active');
+                }
+            });
+        });
+    });
+    
+    // Contador de caracteres
+    const comentarioTexto = document.getElementById('comentarioTexto');
+    const contador = document.getElementById('contador');
+    
+    if (comentarioTexto) {
+        comentarioTexto.addEventListener('input', function() {
+            contador.textContent = this.value.length;
+        });
+    }
+    
+    // Cargar salones al iniciar
+    window.addEventListener('DOMContentLoaded', cargarSalones);
+</script>

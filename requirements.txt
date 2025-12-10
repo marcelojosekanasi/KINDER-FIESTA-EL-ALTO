@@ -4,3 +4,4 @@ Flask-Login
 Werkzeug
 gunicorn
 Pillow  # si usas imágenes
+Flask-Cors
